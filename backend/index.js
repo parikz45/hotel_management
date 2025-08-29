@@ -2,10 +2,13 @@ const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 const cors = require("cors");
+const http = require("http");
+const dotenv = require("dotenv");
+dotenv.config();
 
-const reviewsRoute = require('./routes/Reviews');
-const roomsRoute = require('./routes/Rooms');
-const usersRoute = require('./routes/User');
+// const reviewsRoute = require('./routes/Reviews');
+// const roomsRoute = require('./routes/Rooms');
+const usersRoute = require('./routes/auth');
 
 app.use(cors());
 app.use(express.json());
@@ -23,4 +26,24 @@ app.use(cors({
     contentType: ["Content-Type", "authorization"]
 }));
 
-app.use("/api/users",usersRoute);  
+
+// MongoDB Connection
+mongoose.connect(process.env.Mongo_Url, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+  .then(() => console.log('MongoDB connected'))
+  .catch((err) => console.error("MongoDB connection error:", err));
+
+// Start Server
+const server = http.createServer(app);
+const PORT = 8000 ;
+
+if (!PORT) {
+    console.error("Error: The PORT environment variable is not set.");
+    process.exit(1);
+}
+
+server.listen(PORT, () => {
+  console.log(`Backend server running on port ${PORT}`);
+});

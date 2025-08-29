@@ -12,20 +12,26 @@ const usersRoute = require('./routes/auth');
 
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 
 // Allowed Origins 
 const allowedOrigins = [
-    "http://localhost:5173",
-    "http://localhost:5174",
+  "http://localhost:5173",
+  "http://localhost:5174",
 ];
 
 app.use(cors({
-    origin: allowedOrigins,
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
-    contentType: ["Content-Type", "authorization"]
+  origin: allowedOrigins,
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true,
+  contentType: ["Content-Type", "authorization"]
 }));
 
+app.use((req, res, next) => {
+  console.log(`${req.method} request for '${req.url}' - ${JSON.stringify(req.body)}`);
+  next();
+});
 
 // MongoDB Connection
 mongoose.connect(process.env.Mongo_Url, {
@@ -37,13 +43,15 @@ mongoose.connect(process.env.Mongo_Url, {
 
 // Start Server
 const server = http.createServer(app);
-const PORT = 8000 ;
+const PORT = 8000;
 
 if (!PORT) {
-    console.error("Error: The PORT environment variable is not set.");
-    process.exit(1);
+  console.error("Error: The PORT environment variable is not set.");
+  process.exit(1);
 }
 
 server.listen(PORT, () => {
   console.log(`Backend server running on port ${PORT}`);
 });
+
+app.use('/api/auth', usersRoute);

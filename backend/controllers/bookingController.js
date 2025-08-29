@@ -1,0 +1,42 @@
+const Booking = require('../models/Bookings');
+
+// Create a new booking
+exports.createBooking = async (req, res) => {
+    const newBooking = new Booking(req.body);   
+    try {
+        const savedBooking = await newBooking.save();
+        res.status(200).json(savedBooking);
+    } catch (err) {
+        res.status(500).json(err);
+    }
+};
+
+// Get all bookings of a specific user
+exports.getBookingsByUser = async (req, res) => {
+    try {
+        const bookings = await Booking.find({ user: req.params.userId });
+        res.status(200).json(bookings);
+    } catch (err) {
+        res.status(500).json(err);
+    }
+};
+
+// Get all bookings (admin only)
+exports.getAllBookings = async (req, res) => {
+    try {
+        const bookings = await Booking.find();
+        res.status(200).json(bookings);
+    } catch (err) {
+        res.status(500).json(err);
+    }
+};
+
+// Delete a booking
+exports.deleteBooking = async (req, res) => {
+    try {
+        await Booking.findByIdAndDelete(req.params.id);
+        res.status(200).json("Booking has been deleted...");
+    } catch (err) {
+        res.status(500).json(err);
+    }
+};

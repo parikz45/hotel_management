@@ -6,9 +6,12 @@ const http = require("http");
 const dotenv = require("dotenv");
 dotenv.config();
 
-// const reviewsRoute = require('./routes/Reviews');
-// const roomsRoute = require('./routes/Rooms');
+// routes declarations
+const bookingsRoute = require('./routes/bookings');
 const usersRoute = require('./routes/auth');
+const reviewsRoute = require('./routes/reviews');
+const roomsRoute = require('./routes/rooms');
+const paymentsRoute = require('./routes/payments');
 
 app.use(cors());
 app.use(express.json());
@@ -55,3 +58,7 @@ server.listen(PORT, () => {
 });
 
 app.use('/api/auth', usersRoute);
+app.use('/api/bookings', bookingsRoute);
+app.use('/api/reviews', reviewsRoute);
+app.use('/api/rooms', roomsRoute);
+app.use('/api/payments', paymentsRoute);

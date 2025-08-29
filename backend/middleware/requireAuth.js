@@ -10,7 +10,6 @@ const requireAuth = async (req, res, next) => {
     try {
         const { _id } = jwt.verify(token, process.env.JWT_SECRET);
         req.user = await User.findById(_id).select('-password');
-        console.log(req.user);
         next();
     } catch (error) {
         console.error('Error verifying token:', error);

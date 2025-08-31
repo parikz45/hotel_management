@@ -43,7 +43,7 @@ function Homepage() {
 
       {/* Footer */}
       <footer className="footer">
-        <p>© 2025 HotelEase. All Rights Reserved.</p>
+        <p>© 2025 DeepSea. All Rights Reserved.</p>
       </footer>
     </div>
   );

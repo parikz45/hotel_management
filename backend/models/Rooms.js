@@ -23,6 +23,10 @@ const roomSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now
+    },
+    isReserved: {
+        type: Boolean,
+        default: false
     }
 })
 module.exports = mongoose.model('Room', roomSchema);

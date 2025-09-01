@@ -9,7 +9,7 @@ export default function About() {
                 <span className="text-xl lg:text-2xl font-bold text-white">DeepSea</span>
 
                 {/* Nav Links */}
-                <div className="flex ml-10 lg:ml-0 gap-4 lg:gap-10">
+                <div className="flex ml-15 lg:ml-0 gap-4 lg:gap-10">
                     <a onClick={navigate("/")} className="text-white/90 cursor-pointer hover:text-white">Home</a>
                     <a onClick={navigate("/")} className="text-white/90 cursor-pointer hover:text-white">Rooms</a>
                     <a onClick={navigate("/about")} className="text-white/90 cursor-pointer hover:text-white">About</a>

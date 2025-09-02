@@ -1,16 +1,28 @@
 import React from "react";
 
 function Signup() {
+  const checkPasswordMatch = (e) => {
+    e.preventDefault();
+    const password = e.target.elements.password.value;
+    const confirmPassword = e.target.elements.confirmPassword.value;
+
+    if (password !== confirmPassword) {
+      alert("Passwords do not match!");
+      return;
+    }
+    // Proceed with form submission or further processing
+    alert("Form submitted successfully!");
+  }
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-white shadow-2xl rounded-2xl p-8 w-96">
+      <div className="bg-white shadow-2xl rounded-2xl p-8 w-[90%] lg:w-100 ">
         {/* Heading */}
         <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
           Create an Account
         </h2>
 
         {/* Signup Form */}
-        <form className="space-y-4">
+        <form onSubmit={checkPasswordMatch} className="space-y-4">
           <input
             type="text"
             placeholder="Username"
@@ -30,13 +42,21 @@ function Signup() {
             required
           />
           <input
+            type="string"
+            placeholder="Full Name"
+            className="w-full px-2 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            required
+          />
+          <input
             type="password"
+            name="password"
             placeholder="Password"
             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
             required
           />
           <input
             type="password"
+            name="confirmPassword"
             placeholder="Confirm Password"
             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
             required

@@ -6,6 +6,7 @@ import Landingpage from './Components/Landingpage/LandingPage';
 import About from './Components/About/About';
 import RoomTypes from './Components/Rooms/RoomTypes';
 import Rooms from './Admin/Rooms';
+import Payments from './Components/Payments/Payments';
 
 function App() {
 
@@ -18,6 +19,8 @@ function App() {
         <Route path="/about" element={<About/>} />
         <Route path="/rooms" element={<RoomTypes/>} />
         <Route path="/admin/rooms" element={<Rooms/>} />
+        <Route path="/payments" element={<Payments/>} />
+        <Route path="*" element={<h1 className='flex items-center justify-center min-h-screen'>404 Not Found</h1>} />
       </Routes>
     </Router>
   )

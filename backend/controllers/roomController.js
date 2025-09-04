@@ -11,6 +11,20 @@ const createRoom = async (req, res) => {
     }
 };
 
+// edit a room 
+const editRoom = async (req, res) => {
+    try {
+        const updatedRoom = await Rooms.findByIdAndUpdate(
+            req.params.id,
+            { $set: req.body },
+            { new: true }
+        );
+        res.status(200).json(updatedRoom);
+    } catch (err) {
+        res.status(500).json(err);
+    }
+};
+
 // Get all rooms
 const getAllRooms = async (req, res) => {
     try {

@@ -25,7 +25,7 @@ const Landingpage = () => {
           <p className="mt-4 px-[20px] text-xl">
             Your comfort, our priority. Manage your hotel with ease.
           </p>
-          <button className="mt-8 rounded-md cursor-pointer bg-blue-600 px-6 lg:px-10 py-2 lg:py-3 text-lg font-semibold transition hover:bg-blue-700">
+          <button onClick={()=>navigate("/rooms")} className="mt-8 rounded-md cursor-pointer bg-blue-600 px-6 lg:px-10 py-2 lg:py-3 text-lg font-semibold transition hover:bg-blue-700">
             Book Now
           </button>
         </main>

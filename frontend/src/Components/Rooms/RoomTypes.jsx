@@ -1,12 +1,13 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../Navbar/Navbar";
+import Footer from "../Footer/Footer";
 
 function RoomTypes() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen pb-10 bg-gradient-to-b from-[#0d2e4f] to-[#163c5f] text-white">
+    <div className="min-h-screen  bg-[linear-gradient(180deg,#103C64_0%,#103C63_100%)] text-white">
       {/* Navbar */}
       <Navbar />
 
@@ -105,6 +106,9 @@ function RoomTypes() {
           </div>
         </div>
       </div>
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 }

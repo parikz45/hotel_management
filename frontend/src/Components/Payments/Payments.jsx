@@ -56,7 +56,7 @@ function Payments() {
     const showForm = paymentMethods[selectedMethod]?.isForm;
 
     return (
-        <div className="bg-[#001f3f] min-h-screen text-[#E0E0E0] font-inter">
+        <div className="bg-[linear-gradient(180deg,#103C64_0%,#103C63_100%)] min-h-screen text-[#E0E0E0] font-inter">
             <style jsx="true">
                 {`
                 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
@@ -79,8 +79,8 @@ function Payments() {
                 <div className="bg-white text-gray-800 w-full max-w-2xl p-8 rounded-xl shadow-lg space-y-8">
                     {/* Booking Summary Section */}
                     <div className="border-b border-gray-300 pb-4">
-                        <h2 className="text-2xl font-semibold mb-2">Booking Summary</h2>
-                        <div className="flex justify-between items-center text-gray-600">
+                        <h2 className="text-2xl lg:text-3xl font-semibold mb-2">Booking Summary</h2>
+                        <div className="flex justify-between items-center font-semibold lg:mt-[20px] text-gray-600">
                             <span>Room Type</span>
                             <span className="text-gray-900 font-medium">Deluxe Suite</span>
                         </div>

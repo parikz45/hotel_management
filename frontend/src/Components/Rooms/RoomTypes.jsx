@@ -7,7 +7,7 @@ function RoomTypes() {
   const navigate = useNavigate();
 
   const rooms = [
-    { id: 1, title: "Deluxe Room", image: "room1.jpeg", capacity: "2 people", price: 2000 },
+    { id: 1, title: "Deluxe Room", image: "room1.jpg", capacity: "2 people", price: 2000 },
     { id: 2, title: "Family Suite", image: "room2.jpg", capacity: "3 people", price: 3000 },
     { id: 3, title: "Executive Room", image: "room3.jpg", capacity: "3 people", price: 4000 },
     { id: 4, title: "Presidential Suite", image: "room3.jpg", capacity: "5 people", price: 7000 },

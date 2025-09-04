@@ -7,7 +7,7 @@ import About from './Components/About/About';
 import RoomTypes from './Components/Rooms/RoomTypes';
 import Rooms from './Admin/Rooms';
 import Payments from './Components/Payments/Payments';
-import IndividualRooms from './Components/IndividualRooms/IndividualRooms'; 
+import IndividualRooms from './Components/Rooms/IndividualRooms'; 
 
 function App() {
   return (

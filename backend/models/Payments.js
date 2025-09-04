@@ -30,4 +30,4 @@ const paymentSchema = new mongoose.Schema({
         default: 'pending'
     }
 })
-module.exports = mongoose.model('Booking', paymentSchema);
+module.exports = mongoose.model('Payments', paymentSchema);

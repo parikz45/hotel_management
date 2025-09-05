@@ -2,12 +2,13 @@ const Booking = require('../models/Bookings');
 
 // Create a new booking
 exports.createBooking = async (req, res) => {
+    console.log("Incoming booking body:", req.body);
     const newBooking = new Booking(req.body);   
     try {
         const savedBooking = await newBooking.save();
         res.status(200).json(savedBooking);
     } catch (err) {
-        res.status(500).json(err);
+        res.status(500).json(err.message);
     }
 };
 

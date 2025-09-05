@@ -1,14 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import Navbar from "../Navbar/Navbar";
 import Footer from "../Footer/Footer";
 import axios from "axios";
+import { useAuthContext } from "../../hooks/useAuthContext";
 
 function IndividualRoom() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [roomData, setRoomData] = useState(null);
   const [bookingData, setBookingData] = useState(null);
+  const { user } = useAuthContext();
 
   // state for dates
   const [checkInDate, setCheckInDate] = useState("");
@@ -47,36 +49,46 @@ function IndividualRoom() {
   };
 
   // handle proceed
-  // const handleProceed = async () => {
-  //   if (!checkInDate || !checkOutDate) {
-  //     alert("Please select both check-in and check-out dates.");
-  //     return;
-  //   }
+  const handleProceed = async () => {
+    if (!checkInDate || !checkOutDate) {
+      alert("Please select both check-in and check-out dates.");
+      return;
+    }
 
-  //   try {
-  //     const response = await axios.post(
-  //       "http://localhost:8000/api/bookings",
-  //       {
-  //         room: id,
-  //         checkInDate,
-  //         checkOutDate,
-  //         amount: roomData.rate, 
-  //         status: "pending",
-  //         user: ""
-  //       },
-  //       { withCredentials: true }
-  //     );
+    if (!user || !user._id) {
+      alert("You need to log in before booking.");
+      return;
+    }
 
-  //     const booking = response.data;
-  //     setBookingData(booking);
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/api/bookings",
+        {
+          room: id,
+          checkinDate: checkInDate,
+          checkoutDate: checkOutDate,
+          amount: roomData.rate,
+          status: "pending",
+          user: user._id
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${user.token}`
+          },
+          withCredentials: true
+        }
+      );
 
-  //     navigate(`/payments/${booking._id}`, {
-  //       state: { ...roomData, checkInDate, checkOutDate },
-  //     });
-  //   } catch (error) {
-  //     console.error("Error creating booking before payment:", error);
-  //   }
-  // };
+      const booking = response.data;
+      setBookingData(booking);
+
+      navigate(`/payments/${booking._id}`, {
+        state: { ...roomData, checkInDate, checkOutDate },
+      });
+    } catch (error) {
+      console.error("Error creating booking before payment:", error);
+    }
+  };
 
 
   return (

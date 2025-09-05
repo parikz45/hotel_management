@@ -1,12 +1,21 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Navbar from '../Navbar/Navbar';
+import axios from 'axios';
+import { useParams } from 'react-router-dom';
 
 function Payments() {
+    const { bookingid } = useParams();
     const [selectedMethod, setSelectedMethod] = useState('credit_card');
     const [message, setMessage] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [paymentResponse, setPaymentResponse] = useState(null);
+    const [amount, setAmount] = useState("");
+    const [paymentStatus, setPaymentStatus] = useState("");
+    const [paymentMethod, setPaymentMethod] = useState("");
+    const [checkinDate, setCheckinDate] = useState("");
+    const [checkoutDate, setCheckoutDate] = useState("");
 
     const paymentMethods = {
         'credit_card': { text: 'Card Details', isForm: true, icon: 'https://img.icons8.com/color/48/000000/visa.png' },
@@ -26,34 +35,103 @@ function Payments() {
         setMessage(null);
 
         // Simulating a delay for payment processing
-        setTimeout(() => {
+        setTimeout(async () => {
             setIsLoading(false);
-            const isSuccess = Math.random() > 0.3;
 
-            if (isSuccess) {
+            try {
+                // Call backend to complete booking/payment
+                const response = await axios.post(
+                    'http://localhost:8000/api/bookingFlowRoute/bookRoom',
+                    {
+                        bookingId: bookingid,
+                        paymentMethod: selectedMethod
+                    },
+                    { withCredentials: true }
+                );
+
+                if (selectedMethod === 'cash') {
+                    setMessage({
+                        isSuccess: true,
+                        title: 'Booking Confirmed!',
+                        text: 'Your booking has been confirmed. Please pay at the front desk upon check-in.'
+                    });
+                }
+                else if (selectedMethod === 'upi' || selectedMethod === 'net_banking') {
+                    setMessage({
+                        title: "Payment Successful!",
+                        text: "Your booking has been confirmed. You will receive an email with your booking details shortly.",
+                        isSuccess: true,
+                    });
+                }
+                else {
+                    const isSuccess = Math.random() > 0.3;
+                    if (isSuccess) {
+                        setMessage({
+                            title: "Payment Successful!",
+                            text: "Your booking has been confirmed. You will receive an email with your booking details shortly.",
+                            isSuccess: true,
+                        });
+                    } else {
+                        setMessage({
+                            title: "Payment Failed!",
+                            text: "There was an issue processing your payment. Please try again or use a different method.",
+                            isSuccess: false,
+                        });
+                    }
+                }
+
+                console.log('Booking & payment response:', response.data);
+            } catch (err) {
                 setMessage({
-                    title: 'Payment Successful!',
-                    text: 'Your booking has been confirmed. You will receive an email with your booking details shortly.',
-                    isSuccess: true,
-                });
-            } else {
-                setMessage({
-                    title: 'Payment Failed!',
-                    text: 'There was an issue processing your payment. Please try again or use a different method.',
                     isSuccess: false,
+                    title: 'Payment Failed!',
+                    text: 'There was an issue processing your payment. Please try again or use a different method.'
                 });
+                console.error('Payment error:', err);
             }
+
         }, 2000);
     };
+
 
     const getButtonText = () => {
         if (selectedMethod === 'cash') {
             return 'Confirm Booking';
         }
-        return `Pay $240.00`;
+        return `Pay ₹${amount} `;
     };
 
     const showForm = paymentMethods[selectedMethod]?.isForm;
+
+    // fetch booking details
+    useEffect(() => {
+        const fetchBookingDetails = async () => {
+            try {
+                const response = await axios.get(`http://localhost:8000/api/bookings/${bookingid}`, { withCredentials: true });
+                if (response.data && response.data.amount) {
+                    setAmount(response.data.amount);
+                    setCheckinDate(response.data.checkinDate);
+                    setCheckoutDate(response.data.checkoutDate);
+
+                }
+            } catch (error) {
+                console.error('Error fetching booking details:', error);
+            }
+        };
+        fetchBookingDetails();
+    }, [bookingid]);
+
+    const makePayment = async () => {
+        try {
+            const response = await axios.post('http://localhost:8000/api/payments');
+            console.log('Payment response:', response.data);
+            setPaymentResponse(response.data);
+        }
+        catch (error) {
+            console.error('Payment error:', error);
+        }
+    }
+
 
     return (
         <div className="bg-[linear-gradient(180deg,#103C64_0%,#103C63_100%)] min-h-screen text-[#E0E0E0] font-inter">
@@ -75,7 +153,7 @@ function Payments() {
             {/* Navbar */}
             <Navbar />
 
-            <div className="flex flex-col items-center justify-center p-4">                
+            <div className="flex flex-col items-center justify-center p-4">
                 <div className="bg-white text-gray-800 w-full max-w-2xl p-8 rounded-xl shadow-lg space-y-8">
                     {/* Booking Summary Section */}
                     <div className="border-b border-gray-300 pb-4">
@@ -98,7 +176,7 @@ function Payments() {
                         </div>
                         <div className="flex justify-between items-center font-bold text-xl mt-4 text-gray-900">
                             <span>Total Amount</span>
-                            <span>$240.00</span>
+                            <span>Rs {amount} </span>
                         </div>
                     </div>
 
@@ -118,7 +196,7 @@ function Payments() {
                             ))}
                         </div>
                     </div>
-                    
+
                     {/* Payment Form (conditionally rendered) */}
                     {showForm ? (
                         <form className="space-y-4">

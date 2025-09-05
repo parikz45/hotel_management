@@ -21,6 +21,19 @@ exports.getBookingsByUser = async (req, res) => {
     }
 };
 
+// Get a booking by ID 
+exports.getBookingById = async (req, res) => {
+    try {
+        const booking = await Booking.findById(req.params.id);
+        if (!booking) {
+            return res.status(404).json({ message: 'Booking not found' });
+        }
+        res.status(200).json(booking);
+    } catch (err) {
+        res.status(500).json(err);
+    }
+};
+
 // Get all bookings (admin only)
 exports.getAllBookings = async (req, res) => {
     try {

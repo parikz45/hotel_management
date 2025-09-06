@@ -12,8 +12,10 @@ const usersRoute = require('./routes/auth');
 const reviewsRoute = require('./routes/reviews');
 const roomsRoute = require('./routes/rooms');
 const paymentsRoute = require('./routes/payments');
+const bookingFlowRoute=require('./routes/bookingFlow');
 
-app.use(cors());
+
+// app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -62,3 +64,4 @@ app.use('/api/bookings', bookingsRoute);
 app.use('/api/reviews', reviewsRoute);
 app.use('/api/rooms', roomsRoute);
 app.use('/api/payments', paymentsRoute);
+app.use('/api/bookingFlow',bookingFlowRoute);

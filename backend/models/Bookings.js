@@ -9,6 +9,11 @@ const bookingSchema = new mongoose.Schema({
         type: Date, 
         required: true
     },
+    room: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Room',
+        required: true
+    },
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
@@ -16,8 +21,12 @@ const bookingSchema = new mongoose.Schema({
     },
     status: {
         type: String,   
-        enum: ['booked', 'checked-in', 'checked-out', 'cancelled'],
-        default: 'booked'
+        enum: ['pending', 'booked', 'failed', 'cancelled'],
+        default: 'pending'
+    },
+    amount: {
+        type: Number,
+        required: true
     },
     createdAt: {
         type: Date,

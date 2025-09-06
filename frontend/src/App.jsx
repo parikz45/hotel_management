@@ -9,6 +9,7 @@ import Rooms from './Admin/Rooms';
 import Payments from './Components/Payments/Payments';
 import IndividualRooms from './Components/Rooms/IndividualRooms';
 import { useAuthContext } from './hooks/useAuthContext';
+import Profile from './Components/Profile/Profile';
 
 function App() {
   const { user } = useAuthContext();
@@ -24,6 +25,7 @@ function App() {
         <Route path="/rooms/:id" element={<IndividualRooms />} />
         <Route path="/admin/rooms" element={<Rooms />} />
         <Route path="/payments/:bookingid" element={<Payments />} />
+        <Route path="/profile/:userid" element={user ? <Profile /> : <Navigate to="/login" />} />
         <Route
           path="*"
           element={

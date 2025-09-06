@@ -15,7 +15,7 @@ exports.createBooking = async (req, res) => {
 // Get all bookings of a specific user
 exports.getBookingsByUser = async (req, res) => {
     try {
-        const bookings = await Booking.find({ user: req.params.userId });
+        const bookings = await Booking.find({ user: req.params.userId }).populate('room');
         res.status(200).json(bookings);
     } catch (err) {
         res.status(500).json(err);

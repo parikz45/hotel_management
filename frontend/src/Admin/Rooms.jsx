@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { useRoomContext } from '../hooks/useRoomContext';
 // --- Helper Data & Icons ---
 // In a real app, you would fetch this from an API.
 // const  = [
@@ -96,19 +97,27 @@ const AddEditRoomModal = ({ isOpen, onClose, onSave, roomData }) => {
   const [imagePreviews, setImagePreviews] = useState([]);
 
   React.useEffect(() => {
-    // Pre-fill form if editing, otherwise reset
-    const { images, ...otherData } = roomData || {};
-    setFormData(otherData || {
-      roomType: 'Standard',
-      capacity: '',
-      nightlyRate: '',
-      amenities: 'Wifi',
-      features: '',
-      policies: '',
-      isReserved: false,
-    });
-    // Set initial image previews for editing
-    setImagePreviews(images || []);
+    if (roomData) {
+      // Pre-fill form if editing
+      setFormData({
+        roomType: roomData.type || 'standard',
+        capacity: roomData.capacity || '',
+        nightlyRate: roomData.rate || '',
+        isReserved: roomData.isReserved || false,
+        // other fields...
+      });
+      setImagePreviews(roomData.images || []);
+    } else {
+      // Reset for new room
+      setFormData({
+        roomType: 'standard',
+        capacity: '',
+        nightlyRate: '',
+        isReserved: false,
+        // other fields...
+      });
+      setImagePreviews([]);
+    }
   }, [roomData, isOpen]);
 
   if (!isOpen) return null;
@@ -152,10 +161,16 @@ const AddEditRoomModal = ({ isOpen, onClose, onSave, roomData }) => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700">Room Type</label>
-            <select name="roomType" value={formData.roomType || 'Standard'} onChange={handleChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-              <option>Standard</option>
-              <option>Deluxe</option>
-              <option>Suite</option>
+            <select
+              name="roomType"
+              value={formData.roomType || 'Standard'}
+              onChange={handleChange}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            >
+              <option value="standard">Standard</option>
+              <option value="deluxe">Deluxe</option>
+              <option value="suite">Suite</option>
+              <option value="family">Family</option>
             </select>
           </div>
           <div>
@@ -206,7 +221,8 @@ const AddEditRoomModal = ({ isOpen, onClose, onSave, roomData }) => {
 
 // --- Main Page Component ---
 const Rooms = () => {
-  const [rooms, setRooms] = useState();
+  const { rooms, dispatch } = useRoomContext();
+  // const [rooms, setRooms] = useState();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentRoom, setCurrentRoom] = useState(null); // Used for editing
 
@@ -219,11 +235,14 @@ const Rooms = () => {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
         },
       });
-      setRooms(response.data);
+      const data = response.data;
+      if (response.status === 200) {
+        console.log("Fetched rooms:", data);
+        dispatch({ type: 'SET_ROOMS', payload: data });
+      }
     };
     fetchAllRooms();
-    console.log(rooms);
-  }, []);
+  }, [dispatch]);
 
   const handleOpenModal = () => {
     setCurrentRoom(null); // Clear previous edit data
@@ -240,36 +259,67 @@ const Rooms = () => {
     setIsModalOpen(true);
   };
 
-  const handleDelete = (roomId) => {
+  const handleDelete = async (roomId) => {
     if (window.confirm('Are you sure you want to delete this room?')) {
-      setRooms(rooms.filter(room => room._id !== roomId));
+      try {
+        await axios.delete(`http://localhost:8000/api/rooms/${roomId}`, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
+        dispatch({ type: 'DELETE_ROOM', payload: roomId });
+      } catch (error) {
+        console.error('Failed to delete room:', error);
+      }
     }
   };
 
-  const handleSaveRoom = (savedData) => {
+  const handleSaveRoom = async (savedData) => {
     const roomPayload = {
-      name: savedData.roomType,
-      guests: savedData.capacity,
-      price: savedData.nightlyRate,
+      type: savedData.roomType.toLowerCase(), // Ensure correct casing for backend
+      capacity: parseInt(savedData.capacity),
+      rate: parseInt(savedData.nightlyRate),
+      isReserved: savedData.isReserved || false,
       images: savedData.images.length > 0
         ? savedData.images
         : [`https://placehold.co/600x400/EEE/31343C?text=No+Image`],
     };
+    console.log('Saving room with data:', roomPayload);
+    try {
+      if (currentRoom) {
+        const response = await axios.patch(`http://localhost:8000/api/rooms/${currentRoom._id}`, roomPayload, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
 
-    if (currentRoom) {
-      // Retain all other properties of the room and only update the ones from the form
-      setRooms(rooms.map(room =>
-        room._id === currentRoom._id ? { ...room, ...savedData, ...roomPayload } : room
-      ));
-    } else {
-      const newRoom = {
-        id: Date.now(),
-        ...savedData,
-        ...roomPayload
-      };
-      setRooms([...rooms, newRoom]);
+        dispatch({
+          type: 'UPDATE_ROOM',
+          payload: response.data
+        });
+
+      } else {
+        // Create new room
+        const response = await axios.post('http://localhost:8000/api/rooms', roomPayload, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
+
+        dispatch({
+          type: 'ADD_ROOM',
+          payload: response.data
+        });
+      }
+
+      handleCloseModal();
+
+    } catch (err) {
+      console.error('Failed to save room:', err);
     }
-    handleCloseModal();
   };
 
 

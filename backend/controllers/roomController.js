@@ -2,7 +2,7 @@ const Rooms = require("../models/Rooms");
 
 // Create a new room
 const createRoom = async (req, res) => {
-    const newRoom = new Rooms(req.body);   
+    const newRoom = new Rooms(req.body);
     try {
         const savedRoom = await newRoom.save();
         res.status(200).json(savedRoom);
@@ -59,5 +59,6 @@ module.exports = {
     createRoom,
     getAllRooms,
     getRoomById,
-    deleteRoom
+    deleteRoom,
+    editRoom
 };

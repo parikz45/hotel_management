@@ -2,22 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { useRoomContext } from '../hooks/useRoomContext';
-// --- Helper Data & Icons ---
-// In a real app, you would fetch this from an API.
-// const  = [
-//   { id: 1, name: 'Deluxe Double', guests: 2, price: 180, images: ['https://placehold.co/600x400/6366F1/white?text=Deluxe+View+1', 'https://placehold.co/600x400/34D399/white?text=Deluxe+View+2'] },
-//   { id: 2, name: 'Executive Suite', guests: 2, price: 250, images: ['https://placehold.co/600x400/F59E0B/white?text=Suite+View'] },
-//   { id: 3, name: 'Grand Suite', guests: 4, price: 320, images: ['https://placehold.co/600x400/EF4444/white?text=Grand+Suite+1', 'https://placehold.co/600x400/10B981/white?text=Grand+Suite+2', 'https://placehold.co/600x400/3B82F6/white?text=Grand+Suite+3'] },
-//   { id: 4, name: 'Standard Twin', guests: 2, price: 140, images: ['https://placehold.co/600x400/8B5CF6/white?text=Twin+Room'] },
-//   { id: 5, name: 'Deluxe King', guests: 2, price: 200, images: ['https://placehold.co/600x400/14B8A6/white?text=King+Bed'] },
-//   { id: 6, name: 'Standard Queen', guests: 2, price: 130, images: ['https://placehold.co/600x400/F97316/white?text=Queen+Room'] },
-//   { id: 7, name: 'Family Room', guests: 4, price: 280, images: ['https://placehold.co/600x400/EC4899/white?text=Family+Room+1', 'https://placehold.co/600x400/6D28D9/white?text=Family+Room+2'] },
-//   { id: 8, name: 'Standard King', guests: 2, price: 150, images: ['https://placehold.co/600x400/0EA5E9/white?text=Standard+King'] },
-//   { id: 9, name: 'Deluxe Twin', guests: 2, price: 150, images: ['https://placehold.co/600x400/D97706/white?text=Deluxe+Twin'] },
-//   { id: 10, name: 'Standard Queen', guests: 4, price: 160, images: ['https://placehold.co/600x400/7C3AED/white?text=Quad+Queen'] },
-//   { id: 11, name: 'Penthouse Suite', guests: 4, price: 500, images: ['https://placehold.co/600x400/BE123C/white?text=Penthouse+1', 'https://placehold.co/600x400/059669/white?text=Penthouse+2'] },
-//   { id: 12, name: 'Standard Double', guests: 2, price: 120, images: ['https://placehold.co/600x400/2563EB/white?text=Standard+Double'] },
-// ];
+
 
 const CloseIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -92,6 +77,7 @@ const RoomCard = ({ room, onEdit, onDelete }) => {
 
 
 // 2. Add/Edit Room Modal Component
+// 2. Add/Edit Room Modal Component
 const AddEditRoomModal = ({ isOpen, onClose, onSave, roomData }) => {
   const [formData, setFormData] = useState({});
   const [imagePreviews, setImagePreviews] = useState([]);
@@ -104,7 +90,9 @@ const AddEditRoomModal = ({ isOpen, onClose, onSave, roomData }) => {
         capacity: roomData.capacity || '',
         nightlyRate: roomData.rate || '',
         isReserved: roomData.isReserved || false,
-        // other fields...
+        amenities: roomData.amenities?.join(", ") || "",
+        RoomFeatures: roomData.RoomFeatures?.join(", ") || "",
+        RoomPolicies: roomData.RoomPolicies?.join(", ") || "",
       });
       setImagePreviews(roomData.images || []);
     } else {
@@ -114,7 +102,9 @@ const AddEditRoomModal = ({ isOpen, onClose, onSave, roomData }) => {
         capacity: '',
         nightlyRate: '',
         isReserved: false,
-        // other fields...
+        amenities: "",
+        RoomFeatures: "",
+        RoomPolicies: "",
       });
       setImagePreviews([]);
     }
@@ -124,46 +114,71 @@ const AddEditRoomModal = ({ isOpen, onClose, onSave, roomData }) => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
   };
 
   const handleFileChange = (e) => {
     if (e.target.files.length > 0) {
       const newFiles = Array.from(e.target.files);
-      const newPreviews = newFiles.map(file => URL.createObjectURL(file));
-      setImagePreviews(prev => [...prev, ...newPreviews]);
+      const newPreviews = newFiles.map((file) => URL.createObjectURL(file));
+      setImagePreviews((prev) => [...prev, ...newPreviews]);
     }
   };
 
   const handleRemoveImage = (indexToRemove) => {
     const imageUrl = imagePreviews[indexToRemove];
-    // Revoke object URL to prevent memory leaks if it's a blob URL
-    if (imageUrl.startsWith('blob:')) {
+    if (imageUrl.startsWith("blob:")) {
       URL.revokeObjectURL(imageUrl);
     }
-    setImagePreviews(prev => prev.filter((_, index) => index !== indexToRemove));
+    setImagePreviews((prev) =>
+      prev.filter((_, index) => index !== indexToRemove)
+    );
   };
-
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave({ ...formData, images: imagePreviews });
+    onSave({
+      ...formData,
+      capacity: Number(formData.capacity),
+      nightlyRate: Number(formData.nightlyRate),
+      amenities: formData.amenities
+        ? formData.amenities.split(",").map((a) => a.trim())
+        : [],
+      RoomFeatures: formData.RoomFeatures
+        ? formData.RoomFeatures.split(",").map((f) => f.trim())
+        : [],
+      RoomPolicies: formData.RoomPolicies
+        ? formData.RoomPolicies.split(",").map((p) => p.trim())
+        : [],
+      images: imagePreviews,
+    });
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex overflow-auto items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
       <div className="relative w-full max-w-lg rounded-2xl bg-white p-8 shadow-2xl">
-        <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+        >
           <CloseIcon />
         </button>
-        <h2 className="mb-6 text-2xl font-bold text-gray-800">{roomData ? 'Edit Room' : 'Add Room'}</h2>
+        <h2 className="mb-6 pt-[20px] text-2xl font-bold text-gray-800">
+          {roomData ? "Edit Room" : "Add Room"}
+        </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Room Type */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">Room Type</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Room Type
+            </label>
             <select
               name="roomType"
-              value={formData.roomType || 'Standard'}
+              value={formData.roomType || "standard"}
               onChange={handleChange}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
             >
@@ -173,24 +188,105 @@ const AddEditRoomModal = ({ isOpen, onClose, onSave, roomData }) => {
               <option value="family">Family</option>
             </select>
           </div>
+
+          {/* Capacity */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">Capacity</label>
-            <input type="number" name="capacity" value={formData.capacity || ''} onChange={handleChange} required placeholder="e.g., 2" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
+            <label className="block text-sm font-medium text-gray-700">
+              Capacity
+            </label>
+            <input
+              type="number"
+              name="capacity"
+              value={formData.capacity || ""}
+              onChange={handleChange}
+              required
+              placeholder="e.g., 2"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            />
           </div>
+
+          {/* Nightly Rate */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">Nightly Rate ($)</label>
-            <input type="number" name="nightlyRate" value={formData.nightlyRate || ''} onChange={handleChange} required placeholder="e.g., 150" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
+            <label className="block text-sm font-medium text-gray-700">
+              Nightly Rate (₹)
+            </label>
+            <input
+              type="number"
+              name="nightlyRate"
+              value={formData.nightlyRate || ""}
+              onChange={handleChange}
+              required
+              placeholder="e.g., 150"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            />
           </div>
+
+          {/* Amenities */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">Add More Images</label>
-            <input type="file" name="imageFiles" multiple onChange={handleFileChange} accept="image/*" className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
+            <label className="block text-sm font-medium text-gray-700">
+              Amenities (comma-separated)
+            </label>
+            <textarea
+              name="amenities"
+              value={formData.amenities}
+              onChange={handleChange}
+              placeholder="WiFi, Air Conditioning, TV"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            />
+          </div>
+
+          {/* Room Features */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Room Features (comma-separated)
+            </label>
+            <textarea
+              name="RoomFeatures"
+              value={formData.RoomFeatures}
+              onChange={handleChange}
+              placeholder="Sea View, Balcony, King-size bed"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            />
+          </div>
+
+          {/* Room Policies */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Room Policies (comma-separated)
+            </label>
+            <textarea
+              name="RoomPolicies"
+              value={formData.RoomPolicies}
+              onChange={handleChange}
+              placeholder="No smoking, No pets"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            />
+          </div>
+
+          {/* Images */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Add More Images
+            </label>
+            <input
+              type="file"
+              name="imageFiles"
+              multiple
+              onChange={handleFileChange}
+              accept="image/*"
+              className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+            />
           </div>
 
           {imagePreviews.length > 0 && (
             <div className="grid grid-cols-3 gap-3 rounded-lg border p-2">
               {imagePreviews.map((src, index) => (
                 <div key={src + index} className="relative">
-                  <img src={src} alt={`Preview ${index + 1}`} className="h-24 w-full rounded-md object-cover" />
+                  <img
+                    src={src}
+                    alt={`Preview ${index + 1}`}
+                    className="h-24 w-full rounded-md object-cover"
+                  />
                   <button
                     type="button"
                     onClick={() => handleRemoveImage(index)}
@@ -203,20 +299,46 @@ const AddEditRoomModal = ({ isOpen, onClose, onSave, roomData }) => {
             </div>
           )}
 
+          {/* Is Reserved */}
           <div className="flex items-center">
-            <input id="isReserved" name="isReserved" type="checkbox" checked={formData.isReserved || false} onChange={handleChange} className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" />
-            <label htmlFor="isReserved" className="ml-2 block text-sm text-gray-900">Is Reserved</label>
+            <input
+              id="isReserved"
+              name="isReserved"
+              type="checkbox"
+              checked={formData.isReserved || false}
+              onChange={handleChange}
+              className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+            />
+            <label
+              htmlFor="isReserved"
+              className="ml-2 block text-sm text-gray-900"
+            >
+              Is Reserved
+            </label>
           </div>
 
+          {/* Buttons */}
           <div className="flex justify-end space-x-4 pt-4">
-            <button type="button" onClick={onClose} className="rounded-lg bg-gray-200 px-6 py-2 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-300">Cancel</button>
-            <button type="submit" className="rounded-lg bg-blue-600 px-6 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-700">Save Changes</button>
+            <button
+              type="button"
+              onClick={onClose}
+              className="rounded-lg bg-gray-200 px-6 py-2 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-300"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="rounded-lg bg-blue-600 px-6 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-700"
+            >
+              Save Changes
+            </button>
           </div>
         </form>
       </div>
     </div>
   );
 };
+
 
 
 // --- Main Page Component ---

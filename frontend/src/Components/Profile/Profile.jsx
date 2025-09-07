@@ -6,7 +6,13 @@ import { useAuthContext } from '../../hooks/useAuthContext';
 const Profile = () => {
   const { user } = useAuthContext();
   const [bookings, setBookings] = useState([]);
-  const [confirmCancelId, setConfirmCancelId] = useState(null); 
+  const [confirmCancelId, setConfirmCancelId] = useState(null);
+
+  // review popup state
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [reviewBookingId, setReviewBookingId] = useState(null);
+  const [rating, setRating] = useState(5);
+  const [comment, setComment] = useState("");
 
   useEffect(() => {
     const fetchBookings = async () => {
@@ -24,7 +30,7 @@ const Profile = () => {
     try {
       await axios.delete(`http://localhost:8000/api/bookings/${bookingId}`);
       setBookings(bookings.filter(booking => (booking._id || booking.id) !== bookingId));
-      setConfirmCancelId(null); // reset confirmation state
+      setConfirmCancelId(null);
     } catch (error) {
       console.error('Error cancelling booking:', error);
     }
@@ -37,6 +43,26 @@ const Profile = () => {
       case 'failed': return 'bg-red-300 text-red-900';
       case 'cancelled': return 'bg-gray-400 text-gray-700';
       default: return 'bg-gray-200 text-gray-800';
+    }
+  };
+
+  const submitReview = async () => {
+    if (!reviewBookingId) return;
+    try {
+      const booking = bookings.find(b => (b._id || b.id) === reviewBookingId);
+      const response = await axios.post(`http://localhost:8000/api/reviews`, {
+        user: user._id,
+        room: booking.room._id,
+        rating,
+        comment
+      });
+      console.log("Review added:", response.data);
+      setShowReviewModal(false);
+      setReviewBookingId(null);
+      setRating(5);
+      setComment("");
+    } catch (error) {
+      console.error("Error adding review:", error);
     }
   };
 
@@ -81,7 +107,7 @@ const Profile = () => {
                       </div>
                       <div>
                         <span className="text-sm font-medium">Amount:</span>
-                        <span className="font-bold block text-lg">${booking.amount}</span>
+                        <span className="font-bold block text-lg">Rs {booking.amount}</span>
                       </div>
                     </div>
 
@@ -117,11 +143,25 @@ const Profile = () => {
                               onClick={() => setConfirmCancelId(bookingId)}
                               className="ml-4 px-4 py-2 cursor-pointer text-sm font-semibold rounded-lg bg-red-500 text-white hover:bg-red-600 transition"
                             >
-                              Cancel
+                              Cancel Booking
                             </button>
                           )}
                         </>
                       )}
+
+                      {/* review button */}
+                      {booking.status === "booked" && (
+                        <button
+                          onClick={() => {
+                            setReviewBookingId(bookingId);
+                            setShowReviewModal(true);
+                          }}
+                          className="ml-4 px-4 py-2 cursor-pointer text-sm font-semibold rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition"
+                        >
+                          Write Review
+                        </button>
+                      )}
+
                     </div>
                   </div>
                 </div>
@@ -132,7 +172,56 @@ const Profile = () => {
           )}
         </div>
       </main>
-      
+
+      {/* Review Modal */}
+      {showReviewModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white rounded-xl p-6 w-[400px] shadow-lg">
+            <h3 className="text-xl font-bold mb-4 text-gray-800">Write a Review</h3>
+
+            {/* Star Rating */}
+            <label className="block text-gray-700 mb-2">Rating</label>
+            <div className="flex items-center gap-2 mb-4">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <span
+                  key={star}
+                  onClick={() => setRating(star)}
+                  className={`cursor-pointer text-2xl transition ${star <= rating ? "text-yellow-400" : "text-gray-300"
+                    }`}
+                >
+                  ★
+                </span>
+              ))}
+            </div>
+
+
+            <label className="block text-gray-700 mb-2">Comment</label>
+            <input
+              type="text"
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              rows={3}
+              className="w-full border border-gray-600 text-black p-2 rounded-lg mb-4"
+              placeholder="Write your review..."
+            />
+
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setShowReviewModal(false)}
+                className="px-4 py-2 rounded-lg bg-gray-300 text-gray-800 hover:bg-gray-400 transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={submitReview}
+                className="px-4 py-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition"
+              >
+                Submit
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

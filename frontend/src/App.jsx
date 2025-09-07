@@ -10,6 +10,7 @@ import Payments from './Components/Payments/Payments';
 import IndividualRooms from './Components/Rooms/IndividualRooms';
 import { useAuthContext } from './hooks/useAuthContext';
 import Profile from './Components/Profile/Profile';
+import Allpayments from './Admin/Allpayments';
 
 function App() {
   const { user } = useAuthContext();
@@ -24,6 +25,7 @@ function App() {
         <Route path="/rooms" element={<RoomTypes />} />
         <Route path="/rooms/:id" element={<IndividualRooms />} />
         <Route path="/admin/rooms" element={<Rooms />} />
+        <Route path="/admin/payments" element={<Allpayments />} />
         <Route path="/payments/:bookingid" element={<Payments />} />
         <Route path="/profile/:userid" element={user ? <Profile /> : <Navigate to="/login" />} />
         <Route

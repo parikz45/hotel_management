@@ -14,6 +14,7 @@ const bookRoomFlow = async (req, res) => {
         const payment = await Payment.create({
             user: booking.user,
             amount: booking.amount,
+            booking: booking._id,
             method: paymentMethod,
             status: paymentMethod === 'cash' ? 'pending' : 'completed'
         });

@@ -41,13 +41,14 @@ function Payments() {
             try {
                 // Call backend to complete booking/payment
                 const response = await axios.post(
-                    'http://localhost:8000/api/bookingFlowRoute/bookRoom',
+                    'http://localhost:8000/api/bookingFlow/bookRoom',
                     {
                         bookingId: bookingid,
                         paymentMethod: selectedMethod
                     },
                     { withCredentials: true }
                 );
+                console.log('Response from bookingFlow:', response.data);
 
                 if (selectedMethod === 'cash') {
                     setMessage({
@@ -64,21 +65,21 @@ function Payments() {
                     });
                 }
                 else {
-                    const isSuccess = Math.random() > 0.3;
-                    if (isSuccess) {
+                    if (response.status === 200) {
                         setMessage({
                             title: "Payment Successful!",
-                            text: "Your booking has been confirmed. You will receive an email with your booking details shortly.",
+                            text: response.data.message || "Your booking has been confirmed.",
                             isSuccess: true,
                         });
                     } else {
                         setMessage({
                             title: "Payment Failed!",
-                            text: "There was an issue processing your payment. Please try again or use a different method.",
+                            text: response.data.error || "There was an issue processing your payment.",
                             isSuccess: false,
                         });
                     }
                 }
+
 
                 console.log('Booking & payment response:', response.data);
             } catch (err) {
@@ -121,16 +122,16 @@ function Payments() {
         fetchBookingDetails();
     }, [bookingid]);
 
-    const makePayment = async () => {
-        try {
-            const response = await axios.post('http://localhost:8000/api/payments');
-            console.log('Payment response:', response.data);
-            setPaymentResponse(response.data);
-        }
-        catch (error) {
-            console.error('Payment error:', error);
-        }
-    }
+    // const makePayment = async () => {
+    //     try {
+    //         const response = await axios.post('http://localhost:8000/api/payments');
+    //         console.log('Payment response:', response.data);
+    //         setPaymentResponse(response.data);
+    //     }
+    //     catch (error) {
+    //         console.error('Payment error:', error);
+    //     }
+    // }
 
 
     return (

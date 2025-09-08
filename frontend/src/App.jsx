@@ -11,6 +11,7 @@ import IndividualRooms from './Components/Rooms/IndividualRooms';
 import { useAuthContext } from './hooks/useAuthContext';
 import Profile from './Components/Profile/Profile';
 import Allpayments from './Admin/Allpayments';
+import AdminDashboard from './Admin/Homepage';
 
 function App() {
   const { user } = useAuthContext();
@@ -19,15 +20,25 @@ function App() {
       <Routes>
         <Route path="/" element={<Landingpage />} />
         {/* redirect to home if already logged in */}
-        <Route path="/login" element={!user ? <Login /> : <Navigate to="/" />} />
+        <Route path="/login" element={!user ? <Login /> : (user?.role === "admin" ? <Navigate to="/admin" /> : <Navigate to="/" />)} />
         <Route path="/signup" element={!user ? <Signup /> : <Navigate to="/" />} />
         <Route path="/about" element={<About />} />
         <Route path="/rooms" element={<RoomTypes />} />
         <Route path="/rooms/:id" element={<IndividualRooms />} />
-        <Route path="/admin/rooms" element={<Rooms />} />
-        <Route path="/admin/payments" element={<Allpayments />} />
         <Route path="/payments/:bookingid" element={<Payments />} />
         <Route path="/profile/:userid" element={user ? <Profile /> : <Navigate to="/login" />} />
+        <Route
+          path="/admin/rooms"
+          element={user?.role === "admin" ? <Rooms /> : <Navigate to="/" />}
+        />
+        <Route
+          path="/admin/payments"
+          element={user?.role === "admin" ? <Allpayments /> : <Navigate to="/" />}
+        />
+         <Route
+          path="/admin"
+          element={user?.role === "admin" ? <AdminDashboard /> : <Navigate to="/" />}
+        />
         <Route
           path="*"
           element={

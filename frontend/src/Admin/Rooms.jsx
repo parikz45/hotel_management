@@ -48,7 +48,13 @@ const RoomCard = ({ room, onEdit, onDelete }) => {
   return (
     <div className="group flex flex-col overflow-hidden rounded-xl bg-white shadow-lg transition-transform duration-300 hover:scale-105">
       <div className="relative h-48 w-full">
-        <img src={room.images[currentIndex]} alt={`${room.name} image ${currentIndex + 1}`} className="h-full w-full object-cover transition-opacity duration-300" />
+        <img src={
+          room.images[currentIndex].startsWith("http")
+            ? room.images[currentIndex] // full URL
+            : `/${room.images[currentIndex]}`
+        }
+          className="h-full w-full object-cover transition-opacity duration-300"
+        />
         {room.images.length > 1 && (
           <>
             <button onClick={prevImage} className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-black bg-opacity-40 p-1 text-white opacity-0 transition-opacity group-hover:opacity-100 hover:bg-opacity-60">

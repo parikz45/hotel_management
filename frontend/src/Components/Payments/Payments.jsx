@@ -2,9 +2,12 @@ import React, { useEffect, useState } from 'react';
 import Navbar from '../Navbar/Navbar';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import { useAuthContext } from '../../hooks/useAuthContext'; // ✅ added
 
 function Payments() {
     const { bookingid } = useParams();
+    const { user } = useAuthContext(); // ✅ added
+
     const [selectedMethod, setSelectedMethod] = useState('credit_card');
     const [message, setMessage] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -14,6 +17,7 @@ function Payments() {
     const [paymentMethod, setPaymentMethod] = useState("");
     const [checkinDate, setCheckinDate] = useState("");
     const [checkoutDate, setCheckoutDate] = useState("");
+
 
     const paymentMethods = {
         'credit_card': { text: 'Card Details', isForm: true, icon: 'https://img.icons8.com/color/48/000000/visa.png' },
@@ -119,17 +123,6 @@ function Payments() {
         };
         fetchBookingDetails();
     }, [bookingid]);
-
-    // const makePayment = async () => {
-    //     try {
-    //         const response = await axios.post('http://localhost:8000/api/payments');
-    //         console.log('Payment response:', response.data);
-    //         setPaymentResponse(response.data);
-    //     }
-    //     catch (error) {
-    //         console.error('Payment error:', error);
-    //     }
-    // }
 
 
     return (

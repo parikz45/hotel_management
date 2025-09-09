@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 import Navbar from '../Navbar/Navbar';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import { useAuthContext } from '../../hooks/useAuthContext'; // ✅ added
+import { useAuthContext } from '../../hooks/useAuthContext';
 
 function Payments() {
     const { bookingid } = useParams();
-    const { user } = useAuthContext(); // ✅ added
+    const { user } = useAuthContext(); 
 
     const [selectedMethod, setSelectedMethod] = useState('credit_card');
     const [message, setMessage] = useState(null);

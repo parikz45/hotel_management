@@ -1,6 +1,8 @@
+const { get } = require("http");
 const { loginPost, signupPost, assignAdminRole, getUserIdByUsername } = require("../controllers/authController");
 const checkAdminRole = require("../middleware/checkAdminRole");
 const requireAuth = require("../middleware/requireAuth");
+const { getAllUsers } = require("../controllers/authController");
 
 const router = require("express").Router();
 
@@ -11,5 +13,6 @@ router.get("/getUserId/:username", requireAuth, checkAdminRole, getUserIdByUsern
 //to assign admin role, you need to provide the user ID in the request body,
 //which can be obtained from the above endpoint
 router.post("/assignAdminRole", requireAuth, checkAdminRole, assignAdminRole);
+router.get("/users", getAllUsers);
 
 module.exports = router;

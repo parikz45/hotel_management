@@ -57,9 +57,13 @@ function IndividualRoom() {
     return <h2 className="text-center text-red-600 mt-20">Room not found!</h2>;
   }
 
+  // prepare images safely
   const images = Array.isArray(roomData.images)
-    ? roomData.images.map((img) => "/" + img)
-    : ["/" + roomData.images];
+    ? roomData.images.map((img) =>
+      img.startsWith("http") ? img : "/" + img
+    )
+    : [roomData.images.startsWith("http") ? roomData.images : "/" + roomData.images];
+
 
   const prevImage = () => {
     setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
@@ -164,9 +168,8 @@ function IndividualRoom() {
                     <div
                       key={index}
                       onClick={() => setCurrentIndex(index)}
-                      className={`w-3 h-3 mx-1 rounded-full cursor-pointer ${
-                        currentIndex === index ? "bg-blue-600" : "bg-gray-400"
-                      }`}
+                      className={`w-3 h-3 mx-1 rounded-full cursor-pointer ${currentIndex === index ? "bg-blue-600" : "bg-gray-400"
+                        }`}
                     ></div>
                   ))}
                 </div>
@@ -192,9 +195,7 @@ function IndividualRoom() {
             {roomData.rating ? (
               <div className="flex items-center gap-2 mb-4">
                 {renderStars(roomData.rating)}
-                <span className="text-gray-600 text-lg">
-                  {roomData.rating.toFixed(1)} / 5
-                </span>
+               
               </div>
             ) : (
               <p className="text-gray-500 mb-4">No ratings yet</p>

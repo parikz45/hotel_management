@@ -12,6 +12,7 @@ import { useAuthContext } from './hooks/useAuthContext';
 import Profile from './Components/Profile/Profile';
 import Allpayments from './Admin/Allpayments';
 import AdminDashboard from './Admin/Homepage';
+import AdminUsers from './Admin/AllUsers';
 
 function App() {
   const { user } = useAuthContext();
@@ -37,8 +38,13 @@ function App() {
         />
          <Route
           path="/admin"
-          element={user?.role === "admin" ? <AdminDashboard /> : <Navigate to="/" />}
+          element={<AdminDashboard />}
         />
+        <Route 
+          path="/admin/users"
+          element={user?.role === "admin" ? <AdminUsers /> : <Navigate to="/" />}
+        />
+         {/* 404 Not Found route */}
         <Route
           path="*"
           element={

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../Navbar/Navbar";
 import Footer from "../Footer/Footer";
 import axios from "axios";
+import { Star } from "lucide-react";
 
 function RoomTypes() {
   const navigate = useNavigate();
@@ -70,6 +71,7 @@ function RoomTypes() {
     };
     fetchRooms();
   }, []);
+  
 
   return (
     <div className="min-h-screen bg-[linear-gradient(180deg,#103C64_0%,#103C63_100%)] text-gray-800">
@@ -198,14 +200,12 @@ function RoomTypes() {
                     </p>
                     <p className="text-gray-600 mb-1">
                       Amenities: {room.amenities?.join(", ")}
-                    </p>
-                    <p className="text-gray-600 mb-1">
-                      Features: {room.RoomFeatures?.join(", ")}
-                    </p>
+                    </p>                    
+
                     <p className="text-gray-600 mb-1">
                       Policies: {room.RoomPolicies?.join(", ")}
                     </p>
-                    <p className="text-gray-600 mb-4">₹{room.rate}/night</p>
+                    <p className="text-black font-semibold text-[17px] mb-4">₹{room.rate}/night</p>
                     <button
                       onClick={() => handleBookNow(room)}
                       className="w-full bg-blue-900 text-white py-2 rounded-lg hover:bg-blue-700 transition"

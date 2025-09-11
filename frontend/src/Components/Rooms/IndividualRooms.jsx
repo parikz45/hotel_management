@@ -4,6 +4,7 @@ import Navbar from "../Navbar/Navbar";
 import Footer from "../Footer/Footer";
 import axios from "axios";
 import { useAuthContext } from "../../hooks/useAuthContext";
+import { Star } from "lucide-react";
 
 function IndividualRoom() {
   const { id } = useParams();
@@ -15,6 +16,9 @@ function IndividualRoom() {
   // state for dates
   const [checkInDate, setCheckInDate] = useState("");
   const [checkOutDate, setCheckOutDate] = useState("");
+
+  // state for carousel
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
     const fetchRoomData = async () => {
@@ -29,8 +33,25 @@ function IndividualRoom() {
     fetchRoomData();
   }, [id]);
 
-  // state for carousel
-  const [currentIndex, setCurrentIndex] = useState(0);
+  // fetch reviews and calculate average rating for each room
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8000/api/reviews/room/${id}`);
+        const reviews = response.data;
+        if (reviews.length > 0) {
+          const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
+          const avgRating = totalRating / reviews.length;
+          setRoomData((prev) => ({ ...prev, rating: avgRating }));
+        } else {
+          setRoomData((prev) => ({ ...prev, rating: null }));
+        }
+      } catch (error) {
+        console.error("Error fetching reviews:", error);
+      }
+    };
+    fetchReviews();
+  }, [id]);
 
   if (!roomData) {
     return <h2 className="text-center text-red-600 mt-20">Room not found!</h2>;
@@ -90,6 +111,26 @@ function IndividualRoom() {
     }
   };
 
+  // ⭐ fractional star renderer
+  const renderStars = (rating) => {
+    const stars = [];
+    for (let i = 1; i <= 5; i++) {
+      if (rating >= i) {
+        stars.push(<Star key={i} className="w-6 h-6 text-yellow-400 fill-yellow-400" />);
+      } else if (rating >= i - 0.5) {
+        stars.push(
+          <Star
+            key={i}
+            className="w-6 h-6 text-yellow-400"
+            style={{ fill: "url(#half-grad)" }}
+          />
+        );
+      } else {
+        stars.push(<Star key={i} className="w-6 h-6 text-gray-300" />);
+      }
+    }
+    return stars;
+  };
 
   return (
     <div className="min-h-screen bg-[linear-gradient(180deg,#103C64_0%,#103C63_100%)] text-gray-800">
@@ -101,11 +142,9 @@ function IndividualRoom() {
           <div className="lg:w-1/2 relative">
             <img
               src={images[currentIndex]}
-              // alt={roomData.title}
               className="w-full h-96 object-cover rounded-xl shadow-md"
             />
 
-            {/* Prev Button */}
             {images.length > 1 && (
               <>
                 <button
@@ -114,23 +153,20 @@ function IndividualRoom() {
                 >
                   {"<"}
                 </button>
-
-                {/* Next Button */}
                 <button
                   onClick={nextImage}
                   className="absolute cursor-pointer top-[40%] right-3 transform -translate-y-1/2 bg-black/50 text-white px-3 py-1 rounded-full"
                 >
                   {">"}
                 </button>
-
-                {/* Dots */}
                 <div className="flex justify-center mt-3">
                   {images.map((_, index) => (
                     <div
                       key={index}
                       onClick={() => setCurrentIndex(index)}
-                      className={`w-3 h-3 mx-1 rounded-full cursor-pointer ${currentIndex === index ? "bg-blue-600" : "bg-gray-400"
-                        }`}
+                      className={`w-3 h-3 mx-1 rounded-full cursor-pointer ${
+                        currentIndex === index ? "bg-blue-600" : "bg-gray-400"
+                      }`}
                     ></div>
                   ))}
                 </div>
@@ -143,6 +179,27 @@ function IndividualRoom() {
             <h1 className="text-4xl font-bold text-blue-900 mb-4">
               {roomData.title}
             </h1>
+
+            {/* ⭐ Rating Display */}
+            <svg width="0" height="0">
+              <defs>
+                <linearGradient id="half-grad">
+                  <stop offset="50%" stopColor="rgb(250 204 21)" />
+                  <stop offset="50%" stopColor="rgb(209 213 219)" />
+                </linearGradient>
+              </defs>
+            </svg>
+            {roomData.rating ? (
+              <div className="flex items-center gap-2 mb-4">
+                {renderStars(roomData.rating)}
+                <span className="text-gray-600 text-lg">
+                  {roomData.rating.toFixed(1)} / 5
+                </span>
+              </div>
+            ) : (
+              <p className="text-gray-500 mb-4">No ratings yet</p>
+            )}
+
             <div>
               <h1 className="text-4xl font-bold text-blue-900 mb-4">
                 {roomData.type.charAt(0).toUpperCase() + roomData.type.slice(1)} Room

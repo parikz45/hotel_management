@@ -40,12 +40,12 @@ const AdminDashboard = () => {
     <div className="min-h-screen bg-white text-gray-900 p-10">
       <h1 className="text-3xl font-bold mb-8 text-center">Admin Dashboard</h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
         {cards.map((card, index) => (
           <div
             key={index}
             onClick={() => navigate(card.route)}
-            className={`cursor-pointer ${card.bg} rounded-2xl p-6 shadow-md transition transform hover:-translate-y-1`}
+            className={`cursor-pointer ${card.bg} rounded-2xl p-6 lg:p-15 shadow-md transition transform hover:-translate-y-1`}
           >
             <div className="flex items-center justify-center mb-4">
               {card.icon}

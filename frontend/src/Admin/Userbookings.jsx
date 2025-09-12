@@ -27,15 +27,19 @@ const StatusBadge = ({ status }) => {
 
 // --- New Booking Card Component ---
 const BookingCard = ({ booking }) => {
-    // CORRECTED: Use `booking.room.type` instead of `booking.room.name` to match the Room model.
     const roomName = booking.room?.type || 'N/A';
-    const roomImage = booking.room?.images?.[0] || 'https://placehold.co/600x400/E5E7EB/374151?text=No+Image';
+    const roomImage = booking.room?.images?.[0]
+        ? booking.room.images[0].startsWith("http")
+            ? booking.room.images[0]
+            : "/" + booking.room.images[0]
+        : "https://placehold.co/600x400/E5E7EB/374151?text=No+Image";
+
     const userName = booking.user?.name || booking.user?.username || 'N/A';
 
     return (
         <div className="flex flex-col sm:flex-row items-start gap-6 rounded-2xl bg-white p-6 shadow-lg transition-shadow duration-300 hover:shadow-xl">
-            <img 
-                src={roomImage} 
+            <img
+                src={roomImage}
                 alt={`Image of ${roomName} room`}
                 className="h-40 w-full sm:w-48 rounded-lg object-cover"
             />
@@ -56,7 +60,11 @@ const BookingCard = ({ booking }) => {
                     </div>
                     <div>
                         <p className="font-semibold text-gray-500">Amount</p>
-                        <p className="text-gray-800">${booking.amount.toFixed(2)}</p>
+                        <p className="text-gray-800">₹{booking.amount.toFixed(2)}</p>
+                    </div>
+                    <div>
+                        <p className="font-semibold text-gray-500">Room ID</p>
+                        <p className="text-gray-800">{booking.room._id}</p>
                     </div>
                 </div>
                 <div className="mt-6 flex items-center justify-start gap-4">
@@ -78,7 +86,6 @@ const Userbookings = () => {
     useEffect(() => {
         const fetchBookings = async () => {
             try {
-                // Now only one API call is needed as the backend populates all required data.
                 const response = await axios.get('http://localhost:8000/api/bookings');
                 setBookings(response.data);
             } catch (err) {
@@ -112,9 +119,9 @@ const Userbookings = () => {
                             <BookingCard key={booking._id} booking={booking} />
                         ))
                     ) : (
-                       <div className="p-8 text-center text-gray-500 rounded-lg bg-white shadow-md">
-                           No bookings found.
-                       </div>
+                        <div className="p-8 text-center text-gray-500 rounded-lg bg-white shadow-md">
+                            No bookings found.
+                        </div>
                     )}
                 </main>
             </div>

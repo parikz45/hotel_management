@@ -13,6 +13,7 @@ import Profile from './Components/Profile/Profile';
 import Allpayments from './Admin/Allpayments';
 import AdminDashboard from './Admin/Homepage';
 import AdminUsers from './Admin/AllUsers';
+import Userbookings from './Admin/Userbookings';
 
 function App() {
   const { user } = useAuthContext();
@@ -36,15 +37,19 @@ function App() {
           path="/admin/payments"
           element={user?.role === "admin" ? <Allpayments /> : <Navigate to="/" />}
         />
-         <Route
+        <Route
           path="/admin"
           element={<AdminDashboard />}
         />
-        <Route 
+        <Route
           path="/admin/users"
           element={user?.role === "admin" ? <AdminUsers /> : <Navigate to="/" />}
         />
-         {/* 404 Not Found route */}
+        <Route
+          path="/admin/bookings"
+          element={user?.role === "admin" ? <Userbookings /> : <Navigate to="/" />}
+        />
+        {/* 404 Not Found route */}
         <Route
           path="*"
           element={

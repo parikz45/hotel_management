@@ -59,10 +59,13 @@ function IndividualRoom() {
 
   // prepare images safely
   const images = Array.isArray(roomData.images)
-    ? roomData.images.map((img) =>
-      img.startsWith("http") ? img : "/" + img
-    )
-    : [roomData.images.startsWith("http") ? roomData.images : "/" + roomData.images];
+    ? roomData.images
+      .filter((img) => typeof img === "string" && img.trim() !== "")
+      .map((img) => (img.startsWith("http") ? img : "/" + img))
+    : roomData.images && typeof roomData.images === "string"
+      ? [roomData.images.startsWith("http") ? roomData.images : "/" + roomData.images]
+      : [];
+
 
 
   const prevImage = () => {
@@ -195,7 +198,7 @@ function IndividualRoom() {
             {roomData.rating ? (
               <div className="flex items-center gap-2 mb-4">
                 {renderStars(roomData.rating)}
-               
+
               </div>
             ) : (
               <p className="text-gray-500 mb-4">No ratings yet</p>

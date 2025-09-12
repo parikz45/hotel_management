@@ -45,7 +45,7 @@ function AdminUsers() {
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-3xl font-bold text-gray-900">All Users</h1>
                 <button
-                    onClick={() => navigate("/")}
+                    onClick={() => navigate("/admin")}
                     className="bg-gray-800 text-white px-4 py-2 rounded-lg shadow hover:bg-gray-700"
                 >
                     Return to Home

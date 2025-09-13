@@ -2,9 +2,12 @@ import React from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import backgroundImage from '../../assets/homebg.jpg';
 import Navbar from '../Navbar/Navbar';
+import { useAuthContext } from '../../hooks/useAuthContext';
 
 const Landingpage = () => {
-  const navigate=useNavigate();
+  const navigate = useNavigate();
+  const { user } = useAuthContext();
+
   return (
     <div
       className="relative h-screen w-full bg-cover bg-center"
@@ -15,7 +18,7 @@ const Landingpage = () => {
 
       <div className="relative z-10 flex h-full flex-col text-white">
         {/* navbar */}
-        <Navbar/>
+        <Navbar />
 
         {/* Hero Content */}
         <main className="flex flex-grow flex-col items-center justify-center text-center">
@@ -25,9 +28,18 @@ const Landingpage = () => {
           <p className="mt-4 px-[20px] text-xl">
             Your comfort, our priority. Manage your hotel with ease.
           </p>
-          <button onClick={()=>navigate("/rooms")} className="mt-8 rounded-md cursor-pointer bg-blue-600 px-6 lg:px-10 py-2 lg:py-3 text-lg font-semibold transition hover:bg-blue-700">
-            Book Now
-          </button>
+          <div className='flex gap-10'>
+            <button onClick={() => navigate("/rooms")} className="mt-8 rounded-md cursor-pointer bg-blue-600 px-6 lg:px-10 py-2 lg:py-3 text-lg font-semibold transition hover:bg-blue-700">
+              Book Now
+            </button>
+            {user?.role === "admin" &&
+              <div>
+                <button onClick={() => navigate("/admin")} className='mt-8 rounded-md cursor-pointer bg-blue-600 px-6 lg:px-10 py-2 lg:py-3 text-lg font-semibold transition hover:bg-blue-700'>
+                  AdminPage
+                </button>
+              </div>
+            }
+          </div>
         </main>
       </div>
     </div>

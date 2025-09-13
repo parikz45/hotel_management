@@ -350,9 +350,8 @@ const AddEditRoomModal = ({ isOpen, onClose, onSave, roomData }) => {
 // --- Main Page Component ---
 const Rooms = () => {
   const { rooms, dispatch } = useRoomContext();
-  // const [rooms, setRooms] = useState();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentRoom, setCurrentRoom] = useState(null); // Used for editing
+  const [currentRoom, setCurrentRoom] = useState(null); 
 
 
   useEffect(() => {
@@ -373,7 +372,7 @@ const Rooms = () => {
   }, [dispatch]);
 
   const handleOpenModal = () => {
-    setCurrentRoom(null); // Clear previous edit data
+    setCurrentRoom(null); 
     setIsModalOpen(true);
   };
 
@@ -405,7 +404,7 @@ const Rooms = () => {
 
   const handleSaveRoom = async (savedData) => {
     const roomPayload = {
-      type: savedData.roomType.toLowerCase(), // Ensure correct casing for backend
+      type: savedData.roomType.toLowerCase(), 
       capacity: parseInt(savedData.capacity),
       rate: parseInt(savedData.nightlyRate),
       isReserved: savedData.isReserved || false,
@@ -460,7 +459,7 @@ const Rooms = () => {
           </h1>
           <div className="flex items-center space-x-4">
             <Link
-              to="/"
+              to="/admin"
               className="rounded-lg bg-gray-600 px-5 py-2.5 text-sm font-semibold text-white shadow-md transition-transform duration-200 hover:scale-105 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
             >
               Return to Home

@@ -64,7 +64,7 @@ const BookingCard = ({ booking }) => {
                     </div>
                     <div>
                         <p className="font-semibold text-gray-500">Room ID</p>
-                        <p className="text-gray-800">{booking.room._id}</p>
+                        <p className="text-gray-800">{booking.room?._id}</p>
                     </div>
                 </div>
                 <div className="mt-6 flex items-center justify-start gap-4">

@@ -89,6 +89,16 @@ function IndividualRoom() {
     }
 
     try {
+      const checkResponse = await axios.get(
+        `http://localhost:8000/api/rooms/available/${id}`,
+        { params: { checkin: checkInDate, checkout: checkOutDate } }
+      );
+
+      if (!checkResponse.data.available) {
+        alert("Room is already booked for those dates.");
+        return;
+      }
+
       const response = await axios.post(
         "http://localhost:8000/api/bookings",
         {

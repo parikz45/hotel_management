@@ -6,7 +6,7 @@ import { useAuthContext } from '../../hooks/useAuthContext';
 
 function Payments() {
     const { bookingid } = useParams();
-    const { user } = useAuthContext(); 
+    const { user } = useAuthContext();
 
     const [selectedMethod, setSelectedMethod] = useState('credit_card');
     const [message, setMessage] = useState(null);
@@ -17,6 +17,7 @@ function Payments() {
     const [paymentMethod, setPaymentMethod] = useState("");
     const [checkinDate, setCheckinDate] = useState("");
     const [checkoutDate, setCheckoutDate] = useState("");
+    const [nights,setNights]=useState(0);
 
 
     const paymentMethods = {
@@ -106,6 +107,13 @@ function Payments() {
 
     const showForm = paymentMethods[selectedMethod]?.isForm;
 
+    // format date helper
+    const formatDate = (dateString) => {
+        if (!dateString) return "";
+        const options = { day: '2-digit', month: 'short', year: 'numeric' };
+        return new Date(dateString).toLocaleDateString('en-GB', options);
+    };
+
     // fetch booking details
     useEffect(() => {
         const fetchBookingDetails = async () => {
@@ -113,8 +121,17 @@ function Payments() {
                 const response = await axios.get(`http://localhost:8000/api/bookings/${bookingid}`, { withCredentials: true });
                 if (response.data && response.data.amount) {
                     setAmount(response.data.amount);
-                    setCheckinDate(response.data.checkinDate);
-                    setCheckoutDate(response.data.checkoutDate);
+
+                    const checkin = new Date(response.data.checkinDate);
+                    const checkout = new Date(response.data.checkoutDate);
+
+                    setCheckinDate(formatDate(checkin));
+                    setCheckoutDate(formatDate(checkout));
+
+                    // calculate no of nights
+                    const diffTime = checkout.getTime() - checkin.getTime();
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    setNights(diffDays);
 
                 }
             } catch (error) {
@@ -156,15 +173,15 @@ function Payments() {
                         </div>
                         <div className="flex justify-between items-center text-gray-600 mt-2">
                             <span>Check-in Date</span>
-                            <span className="text-gray-900 font-medium">Oct 26, 2025</span>
+                            <span className="text-gray-900 font-medium">{checkinDate} </span>
                         </div>
                         <div className="flex justify-between items-center text-gray-600 mt-2">
                             <span>Check-out Date</span>
-                            <span className="text-gray-900 font-medium">Oct 29, 2025</span>
+                            <span className="text-gray-900 font-medium">{checkoutDate} </span>
                         </div>
                         <div className="flex justify-between items-center text-gray-600 mt-2">
                             <span>Nights</span>
-                            <span className="text-gray-900 font-medium">3</span>
+                            <span className="text-gray-900 font-medium">{nights} </span>
                         </div>
                         <div className="flex justify-between items-center font-bold text-xl mt-4 text-gray-900">
                             <span>Total Amount</span>

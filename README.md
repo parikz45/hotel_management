@@ -16,8 +16,8 @@ Managing hotel operations manually is inefficient. This project provides a digit
 ## Problem it solves
 It allows users to easily browse and book hotel rooms online, while admins can oversee all bookings, users, and payments in one centralized dashboard.
 
-## What I learned
-Building this project improved my skills in full-stack development, authentication, routing, REST APIs, and integration between frontend and backend services.
+## What We learned
+Building this project improved our skills in full-stack development, authentication, routing, REST APIs, and integration between frontend and backend services.
 
 ---
 
@@ -82,7 +82,6 @@ Building this project improved my skills in full-stack development, authenticati
 |--------------|--------------|----------------|
 | ![Landing Page](frontend/src/assets/images/landing-page.png) | ![Booking Flow](frontend/src/assets/images/booking-flow.png) | ![Admin Dashboard](frontend/src/assets/images/admin-dashboard.png) |
 
-> **Note:** Add your screenshots in `assets/images` with the above file names.
 
 ---
 

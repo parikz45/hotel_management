@@ -19,10 +19,8 @@ const Login = () => {
     const success = await login(username, password);
     if (success) {
       if (room) {
-        // If room info exists, navigate to that room's page after login
         navigate(from, { state: room });
       } else {
-        // Otherwise, go to the homepage or default page
         navigate("/");
       }
     }

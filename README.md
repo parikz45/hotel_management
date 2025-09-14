@@ -80,7 +80,7 @@ Building this project improved my skills in full-stack development, authenticati
 
 | Landing Page | Booking Flow | Admin Dashboard |
 |--------------|--------------|----------------|
-| ![Landing Page](assets/images/landing-page.png) | ![Booking Flow](assets/images/booking-flow.png) | ![Admin Dashboard](assets/images/admin-dashboard.png) |
+| ![Landing Page](frontend/src/assets/images/landing-page.png) | ![Booking Flow](frontend/src/assets/images/booking-flow.png) | ![Admin Dashboard](frontend/src/assets/images/admin-dashboard.png) |
 
 > **Note:** Add your screenshots in `assets/images` with the above file names.
 

@@ -58,6 +58,20 @@ function RoomTypes() {
     );
   });
 
+  // pagination logic
+  const itemsPerPage = 4;
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = Math.ceil(filteredRooms.length / itemsPerPage);
+
+  const paginatedRooms = filteredRooms.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+  const goToPage = (page) => {
+    setCurrentPage(page);
+    window.scrollTo(0, 0); // Scroll to top when page changes
+  };
+
   // fetch all rooms
   useEffect(() => {
     const fetchRooms = async () => {
@@ -71,7 +85,7 @@ function RoomTypes() {
     };
     fetchRooms();
   }, []);
-  
+
 
   return (
     <div className="min-h-screen bg-[linear-gradient(180deg,#103C64_0%,#103C63_100%)] text-gray-800">
@@ -175,40 +189,28 @@ function RoomTypes() {
           </div>
 
           {/* Room Listings */}
-          <div className="w-full lg:w-3/4 grid grid-cols-1 sm:grid-cols-2 gap-6">
-            {filteredRooms.length > 0 ? (
-              filteredRooms.map((room) => (
+          <div className="w-full lg:w-3/4 grid grid-cols-1 sm:grid-cols-2 gap-8 items-stretch h-full">
+            {paginatedRooms.length > 0 ? (
+              paginatedRooms.map((room) => (
                 <div
                   key={room._id}
-                  className="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow overflow-hidden"
+                  className="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow overflow-hidden flex flex-col h-full"
                 >
                   <img
-                    src={
-                      room.images && room.images.length > 0
-                        ? room.images[0]
-                        : "room1.jpg"
-                    }
+                    src={room.images && room.images.length > 0 ? room.images[0] : "room1.jpg"}
                     alt={room.type}
                     className="w-full h-48 object-cover"
                   />
-                  <div className="p-4">
+                  <div className="p-4 flex flex-col flex-grow">
                     <h3 className="text-xl font-bold text-blue-900 mb-2">
                       {room.type.charAt(0).toUpperCase() + room.type.slice(1)}
                     </h3>
-                    <p className="text-gray-600 mb-1">
-                      Capacity: {room.capacity} people
-                    </p>
-                    <p className="text-gray-600 mb-1">
-                      Amenities: {room.amenities?.join(", ")}
-                    </p>                    
-
-                    <p className="text-gray-600 mb-1">
-                      Policies: {room.RoomPolicies?.join(", ")}
-                    </p>
+                    <p className="text-gray-600 mb-1">Capacity: {room.capacity} people</p>
+                    <p className="text-gray-600 mb-1">Amenities: {room.amenities?.join(", ")}</p>
                     <p className="text-black font-semibold text-[17px] mb-4">₹{room.rate}/night</p>
                     <button
                       onClick={() => handleBookNow(room)}
-                      className="w-full bg-blue-900 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+                      className="mt-auto w-full bg-blue-900 text-white py-2 rounded-lg hover:bg-blue-700 transition"
                     >
                       Book Now
                     </button>
@@ -221,7 +223,25 @@ function RoomTypes() {
               </div>
             )}
           </div>
+
+
         </div>
+        {/* Pagination Controls */}
+        <div className="flex justify-center mt-6 lg:mt-10 ml-30 space-x-2">
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            <button
+              key={page}
+              onClick={() => goToPage(page)}
+              className={`px-3 py-1 rounded-md ${currentPage === page
+                ? "bg-blue-900 text-white"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                }`}
+            >
+              {page}
+            </button>
+          ))}
+        </div>
+
       </div>
 
       <Footer />

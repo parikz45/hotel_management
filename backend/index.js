@@ -24,6 +24,7 @@ app.use(express.urlencoded({ extended: true }));
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:5174",
+  "https://deepseahotel.vercel.app", // add deployed frontend
 ];
 
 app.use(cors({
@@ -32,6 +33,7 @@ app.use(cors({
   credentials: true,
   allowedHeaders: ["Content-Type", "authorization"]
 }));
+
 
 app.use((req, res, next) => {
   console.log(`${req.method} request for '${req.url}' - ${JSON.stringify(req.body)}`);
@@ -48,16 +50,16 @@ mongoose.connect(process.env.Mongo_Url, {
 
 // Start Server
 const server = http.createServer(app);
-const PORT = 8000;
+const PORT = process.env.PORT || 8000;
+server.listen(PORT, () => {
+  console.log(`Backend running on port ${PORT}`);
+});
+
 
 if (!PORT) {
   console.error("Error: The PORT environment variable is not set.");
   process.exit(1);
 }
-
-server.listen(PORT, () => {
-  console.log(`Backend server running on port ${PORT}`);
-});
 
 app.use('/api/auth', usersRoute);
 app.use('/api/bookings', bookingsRoute);

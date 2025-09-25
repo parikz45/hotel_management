@@ -1,3 +1,4 @@
+const Bookings = require("../models/Bookings");
 const Rooms = require("../models/Rooms");
 
 // Create a new room
@@ -55,10 +56,39 @@ const deleteRoom = async (req, res) => {
     }
 };
 
+const isRoomAvailable = async (roomId, checkinDate, checkoutDate) => {
+    const overlappingBooking = await Bookings.findOne({
+        room: roomId,
+        status: "booked",
+        $or: [
+            {
+                checkinDate: { $lt: checkoutDate },
+                checkoutDate: { $gt: checkinDate }
+            }
+        ]
+    });
+
+    return !overlappingBooking;
+};
+
+// check room availability
+const checkAvailabilty = async (req, res) => {
+    try {
+        const { checkin, checkout } = req.query;
+        const roomId = req.params.id;
+
+        const available = await isRoomAvailable(roomId, checkin, checkout);
+        res.status(200).json(available);
+    } catch (err) {
+        res.status(500).json(err);
+    }
+}
+
 module.exports = {
     createRoom,
     getAllRooms,
     getRoomById,
     deleteRoom,
-    editRoom
+    editRoom,
+    checkAvailabilty
 };

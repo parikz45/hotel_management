@@ -30,7 +30,7 @@ app.use(cors({
   origin: allowedOrigins,
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   credentials: true,
-  contentType: ["Content-Type", "authorization"]
+  allowedHeaders: ["Content-Type", "authorization"]
 }));
 
 app.use((req, res, next) => {

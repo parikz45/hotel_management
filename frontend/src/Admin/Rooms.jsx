@@ -48,7 +48,13 @@ const RoomCard = ({ room, onEdit, onDelete }) => {
   return (
     <div className="group flex flex-col overflow-hidden rounded-xl bg-white shadow-lg transition-transform duration-300 hover:scale-105">
       <div className="relative h-48 w-full">
-        <img src={room.images[currentIndex]} alt={`${room.name} image ${currentIndex + 1}`} className="h-full w-full object-cover transition-opacity duration-300" />
+        <img src={
+          room.images[currentIndex].startsWith("http")
+            ? room.images[currentIndex] // full URL
+            : `/${room.images[currentIndex]}`
+        }
+          className="h-full w-full object-cover transition-opacity duration-300"
+        />
         {room.images.length > 1 && (
           <>
             <button onClick={prevImage} className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-black bg-opacity-40 p-1 text-white opacity-0 transition-opacity group-hover:opacity-100 hover:bg-opacity-60">
@@ -344,9 +350,8 @@ const AddEditRoomModal = ({ isOpen, onClose, onSave, roomData }) => {
 // --- Main Page Component ---
 const Rooms = () => {
   const { rooms, dispatch } = useRoomContext();
-  // const [rooms, setRooms] = useState();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentRoom, setCurrentRoom] = useState(null); // Used for editing
+  const [currentRoom, setCurrentRoom] = useState(null); 
 
 
   useEffect(() => {
@@ -367,7 +372,7 @@ const Rooms = () => {
   }, [dispatch]);
 
   const handleOpenModal = () => {
-    setCurrentRoom(null); // Clear previous edit data
+    setCurrentRoom(null); 
     setIsModalOpen(true);
   };
 
@@ -399,7 +404,7 @@ const Rooms = () => {
 
   const handleSaveRoom = async (savedData) => {
     const roomPayload = {
-      type: savedData.roomType.toLowerCase(), // Ensure correct casing for backend
+      type: savedData.roomType.toLowerCase(), 
       capacity: parseInt(savedData.capacity),
       rate: parseInt(savedData.nightlyRate),
       isReserved: savedData.isReserved || false,
@@ -454,7 +459,7 @@ const Rooms = () => {
           </h1>
           <div className="flex items-center space-x-4">
             <Link
-              to="/"
+              to="/admin"
               className="rounded-lg bg-gray-600 px-5 py-2.5 text-sm font-semibold text-white shadow-md transition-transform duration-200 hover:scale-105 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
             >
               Return to Home

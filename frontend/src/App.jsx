@@ -11,33 +11,67 @@ import IndividualRooms from './Components/Rooms/IndividualRooms';
 import { useAuthContext } from './hooks/useAuthContext';
 import Profile from './Components/Profile/Profile';
 import Allpayments from './Admin/Allpayments';
+import AdminDashboard from './Admin/Homepage';
+import AdminUsers from './Admin/AllUsers';
+import Userbookings from './Admin/Userbookings';
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   const { user } = useAuthContext();
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Landingpage />} />
-        {/* redirect to home if already logged in */}
-        <Route path="/login" element={!user ? <Login /> : <Navigate to="/" />} />
-        <Route path="/signup" element={!user ? <Signup /> : <Navigate to="/" />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/rooms" element={<RoomTypes />} />
-        <Route path="/rooms/:id" element={<IndividualRooms />} />
-        <Route path="/admin/rooms" element={<Rooms />} />
-        <Route path="/admin/payments" element={<Allpayments />} />
-        <Route path="/payments/:bookingid" element={<Payments />} />
-        <Route path="/profile/:userid" element={user ? <Profile /> : <Navigate to="/login" />} />
-        <Route
-          path="*"
-          element={
-            <h1 className="flex items-center justify-center min-h-screen">
-              404 Not Found
-            </h1>
-          }
-        />
-      </Routes>
-    </Router>
+    <>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Landingpage />} />
+          {/* redirect to home if already logged in */}
+          <Route path="/login" element={!user ? <Login /> : (user?.role === "admin" ? <Navigate to="/admin" /> : <Navigate to="/" />)} />
+          <Route path="/signup" element={!user ? <Signup /> : <Navigate to="/" />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/rooms" element={<RoomTypes />} />
+          <Route path="/rooms/:id" element={<IndividualRooms />} />
+          <Route path="/payments/:bookingid" element={<Payments />} />
+          <Route path="/profile/:userid" element={user ? <Profile /> : <Navigate to="/login" />} />
+          <Route
+            path="/admin/rooms"
+            element={user?.role === "admin" ? <Rooms /> : <Navigate to="/" />}
+          />
+          <Route
+            path="/admin/payments"
+            element={user?.role === "admin" ? <Allpayments /> : <Navigate to="/" />}
+          />
+          <Route
+            path="/admin"
+            element={<AdminDashboard />}
+          />
+          <Route
+            path="/admin/users"
+            element={user?.role === "admin" ? <AdminUsers /> : <Navigate to="/" />}
+          />
+          <Route
+            path="/admin/bookings"
+            element={user?.role === "admin" ? <Userbookings /> : <Navigate to="/" />}
+          />
+          {/* 404 Not Found route */}
+          <Route
+            path="*"
+            element={
+              <h1 className="flex items-center justify-center min-h-screen">
+                404 Not Found
+              </h1>
+            }
+          />
+
+        </Routes>
+      </Router>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        pauseOnHover
+        draggable
+        theme="light"
+      />
+    </>
   );
 }
 

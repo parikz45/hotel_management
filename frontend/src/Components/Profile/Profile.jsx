@@ -1,73 +1,44 @@
-import React, { useEffect, useState } from 'react';
-import Navbar from '../Navbar/Navbar';
-import axios from 'axios';
-import { useAuthContext } from '../../hooks/useAuthContext';
+import React, { useState } from "react";
+import Navbar from "../Navbar/Navbar";
+import { useAuthContext } from "../../hooks/useAuthContext";
+import { useBookings } from "../../hooks/useBookings";
+import { useReview } from "../../hooks/useReview";
 
 const Profile = () => {
   const { user } = useAuthContext();
-  const [bookings, setBookings] = useState([]);
+  const { bookings, loading, cancelBooking } = useBookings(user._id);
   const [confirmCancelId, setConfirmCancelId] = useState(null);
 
-  // review popup state
-  const [showReviewModal, setShowReviewModal] = useState(false);
-  const [reviewBookingId, setReviewBookingId] = useState(null);
-  const [rating, setRating] = useState(5);
-  const [comment, setComment] = useState("");
-
-  useEffect(() => {
-    const fetchBookings = async () => {
-      try {
-        const response = await axios.get(`http://localhost:8000/api/bookings/user/${user._id}`);
-        setBookings(response.data);
-      } catch (error) {
-        console.error('Error fetching bookings:', error);
-      }
-    };
-    fetchBookings();
-  }, [user._id]);
-
-  const cancelBooking = async (bookingId) => {
-    try {
-      await axios.delete(`http://localhost:8000/api/bookings/${bookingId}`);
-      setBookings(bookings.filter(booking => (booking._id || booking.id) !== bookingId));
-      setConfirmCancelId(null);
-    } catch (error) {
-      console.error('Error cancelling booking:', error);
-    }
-  };
+  const {
+    showReviewModal,
+    rating,
+    setRating,
+    comment,
+    setComment,
+    openReviewModal,
+    closeReviewModal,
+    submitReview,
+  } = useReview(user._id);
 
   const getStatusClass = (status) => {
     switch (status) {
-      case 'pending': return 'bg-yellow-300 text-yellow-900';
-      case 'booked': return 'bg-green-300 text-green-900';
-      case 'failed': return 'bg-red-300 text-red-900';
-      case 'cancelled': return 'bg-gray-400 text-gray-700';
-      default: return 'bg-gray-200 text-gray-800';
+      case "pending":
+        return "bg-yellow-300 text-yellow-900";
+      case "booked":
+        return "bg-green-300 text-green-900";
+      case "failed":
+        return "bg-red-300 text-red-900";
+      case "cancelled":
+        return "bg-gray-400 text-gray-700";
+      default:
+        return "bg-gray-200 text-gray-800";
     }
   };
 
-  const submitReview = async () => {
-    if (!reviewBookingId) return;
-    try {
-      const booking = bookings.find(b => (b._id || b.id) === reviewBookingId);
-      const response = await axios.post(`http://localhost:8000/api/reviews`, {
-        user: user._id,
-        room: booking.room._id,
-        rating,
-        comment
-      });
-      console.log("Review added:", response.data);
-      setShowReviewModal(false);
-      setReviewBookingId(null);
-      setRating(5);
-      setComment("");
-    } catch (error) {
-      console.error("Error adding review:", error);
-    }
-  };
+  if (loading) return <p className="text-center text-gray-400">Loading...</p>;
 
   return (
-    <div className="p-3 min-h-screen" style={{ backgroundColor: '#0f2441', color: '#ffffff', fontFamily: 'Inter, sans-serif' }}>
+    <div className="p-3 min-h-screen bg-[#0f2441] text-white font-sans">
       <Navbar />
 
       <main className="max-w-4xl mx-auto">
@@ -77,17 +48,17 @@ const Profile = () => {
         </div>
 
         <div className="space-y-6">
-          {bookings && Array.isArray(bookings) && bookings.length > 0 ? (
+          {bookings.length > 0 ? (
             bookings.map((booking) => {
               const bookingId = booking._id || booking.id;
               return (
                 <div
                   key={bookingId}
-                  className="bg-white text-gray-800 rounded-2xl p-8 mb-8 shadow-lg flex flex-col sm:flex-row items-start sm:items-center"
+                  className="bg-white text-gray-800 rounded-2xl p-8 mb-8 shadow-lg flex flex-col sm:flex-row"
                 >
                   <img
                     src={`/${booking.room.images[0]}`}
-                    alt={`${booking.room.type} room`}
+                    alt={booking.room.type}
                     className="rounded-xl w-full sm:w-56 h-40 object-cover mb-6 sm:mb-0 sm:mr-8"
                   />
                   <div className="flex-grow">
@@ -107,12 +78,16 @@ const Profile = () => {
                       </div>
                       <div>
                         <span className="text-sm font-medium">Amount:</span>
-                        <span className="font-bold block text-lg">Rs {booking.amount}</span>
+                        <span className="font-bold block text-lg">
+                          Rs {booking.amount}
+                        </span>
                       </div>
                     </div>
 
                     <div className="mt-6 flex items-center space-x-3">
-                      <span className="text-sm font-medium text-gray-500">Status:</span>
+                      <span className="text-sm font-medium text-gray-500">
+                        Status:
+                      </span>
                       <span
                         className={`px-4 py-2 text-sm font-semibold rounded-full capitalize ${getStatusClass(
                           booking.status
@@ -121,19 +96,24 @@ const Profile = () => {
                         {booking.status}
                       </span>
 
-                      {(booking.status === "pending" || booking.status === "booked") && (
+                      {/* Cancel Booking */}
+                      {(booking.status === "pending" ||
+                        booking.status === "booked") && (
                         <>
                           {confirmCancelId === bookingId ? (
                             <div className="ml-4 flex space-x-2">
                               <button
-                                onClick={() => cancelBooking(bookingId)}
-                                className="px-4 py-2 text-sm font-semibold rounded-lg bg-red-500 text-white hover:bg-red-600 transition"
+                                onClick={() => {
+                                  cancelBooking(bookingId);
+                                  setConfirmCancelId(null);
+                                }}
+                                className="px-4 py-2 text-sm rounded-lg bg-red-500 text-white hover:bg-red-600"
                               >
                                 Yes, Cancel
                               </button>
                               <button
                                 onClick={() => setConfirmCancelId(null)}
-                                className="px-4 py-2 text-sm font-semibold rounded-lg bg-gray-300 text-gray-800 hover:bg-gray-400 transition"
+                                className="px-4 py-2 text-sm rounded-lg bg-gray-300 text-gray-800 hover:bg-gray-400"
                               >
                                 No
                               </button>
@@ -141,7 +121,7 @@ const Profile = () => {
                           ) : (
                             <button
                               onClick={() => setConfirmCancelId(bookingId)}
-                              className="ml-4 px-4 py-2 cursor-pointer text-sm font-semibold rounded-lg bg-red-500 text-white hover:bg-red-600 transition"
+                              className="ml-4 px-4 py-2 text-sm rounded-lg bg-red-500 text-white hover:bg-red-600"
                             >
                               Cancel Booking
                             </button>
@@ -149,19 +129,15 @@ const Profile = () => {
                         </>
                       )}
 
-                      {/* review button */}
+                      {/* Review button */}
                       {booking.status === "booked" && (
                         <button
-                          onClick={() => {
-                            setReviewBookingId(bookingId);
-                            setShowReviewModal(true);
-                          }}
-                          className="ml-4 px-4 py-2 cursor-pointer text-sm font-semibold rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition"
+                          onClick={() => openReviewModal(bookingId)}
+                          className="ml-4 px-4 py-2 text-sm rounded-lg bg-blue-500 text-white hover:bg-blue-600"
                         >
                           Write Review
                         </button>
                       )}
-
                     </div>
                   </div>
                 </div>
@@ -177,44 +153,44 @@ const Profile = () => {
       {showReviewModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white rounded-xl p-6 w-[400px] shadow-lg">
-            <h3 className="text-xl font-bold mb-4 text-gray-800">Write a Review</h3>
+            <h3 className="text-xl font-bold mb-4 text-gray-800">
+              Write a Review
+            </h3>
 
-            {/* Star Rating */}
             <label className="block text-gray-700 mb-2">Rating</label>
-            <div className="flex items-center gap-2 mb-4">
+            <div className="flex gap-2 mb-4">
               {[1, 2, 3, 4, 5].map((star) => (
                 <span
                   key={star}
                   onClick={() => setRating(star)}
-                  className={`cursor-pointer text-2xl transition ${star <= rating ? "text-yellow-400" : "text-gray-300"
-                    }`}
+                  className={`cursor-pointer text-2xl transition ${
+                    star <= rating ? "text-yellow-400" : "text-gray-300"
+                  }`}
                 >
                   ★
                 </span>
               ))}
             </div>
 
-
             <label className="block text-gray-700 mb-2">Comment</label>
             <input
               type="text"
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              rows={3}
               className="w-full border border-gray-600 text-black p-2 rounded-lg mb-4"
               placeholder="Write your review..."
             />
 
             <div className="flex justify-end gap-3">
               <button
-                onClick={() => setShowReviewModal(false)}
-                className="px-4 py-2 rounded-lg bg-gray-300 text-gray-800 hover:bg-gray-400 transition"
+                onClick={closeReviewModal}
+                className="px-4 py-2 rounded-lg bg-gray-300 text-gray-800 hover:bg-gray-400"
               >
                 Cancel
               </button>
               <button
-                onClick={submitReview}
-                className="px-4 py-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition"
+                onClick={() => submitReview(bookings)}
+                className="px-4 py-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600"
               >
                 Submit
               </button>

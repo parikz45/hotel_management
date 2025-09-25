@@ -9,6 +9,7 @@ function Navbar() {
     const { user } = useAuthContext();
     const { logout } = useLogout();
     const [isOpen, setIsOpen] = useState(false);
+    const [logoutPopup, setLogoutPopup] = useState(false);
 
     const navLinks = (
         <>
@@ -39,7 +40,7 @@ function Navbar() {
                         Profile
                     </a>
                     <span
-                        onClick={logout}
+                        onClick={()=> setLogoutPopup(true)}
                         className="text-white/90 text-[14px] lg:text-[16px] cursor-pointer hover:text-white"
                     >
                         Logout
@@ -78,6 +79,37 @@ function Navbar() {
             {isOpen && (
                 <div className="absolute top-16 left-0 w-full bg-[#0f2441] shadow-lg flex flex-col gap-4 p-4 lg:hidden z-50">
                     {navLinks}
+                </div>
+            )}
+
+            {/* Logout Confirmation Popup */}
+            {logoutPopup && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-50">
+                    <div className="bg-white rounded-xl p-10 w-[400px] shadow-lg">
+                        <h3 className="text-2xl font-bold mb-4 text-gray-800">
+                            Confirm Logout
+                        </h3>
+                        <p className="mb-4 text-gray-600">
+                            Are you sure you want to logout?
+                        </p>
+                        <div className="flex justify-end gap-3">
+                            <button
+                                onClick={() => setLogoutPopup(false)}
+                                className="px-4 py-2 rounded-lg bg-gray-300 text-gray-800 hover:bg-gray-400"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={() => {
+                                    logout();
+                                    setLogoutPopup(false);
+                                }}
+                                className="px-4 py-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600"
+                            >
+                                Logout
+                            </button>
+                        </div>
+                    </div>
                 </div>
             )}
         </nav>

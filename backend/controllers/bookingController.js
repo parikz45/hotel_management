@@ -38,7 +38,7 @@ exports.getBookingById = async (req, res) => {
 // Get all bookings (admin only)
 exports.getAllBookings = async (req, res) => {
     try {
-        const bookings = await Booking.find();
+        const bookings = await Booking.find().populate('room').populate('user');
         res.status(200).json(bookings);
     } catch (err) {
         res.status(500).json(err);

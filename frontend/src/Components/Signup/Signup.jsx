@@ -1,5 +1,11 @@
 import { useState } from "react";
 import { useSignup } from "../../hooks/useSignup";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+function showToast(){
+  toast.error("Passwords do not match!")
+}
 
 function Signup() {
   const { signup, error, isLoading } = useSignup();
@@ -19,7 +25,7 @@ function Signup() {
     e.preventDefault();
     const { password, confirmPassword } = formData;
     if (password !== confirmPassword) {
-      alert("Passwords do not match!");
+      showToast();
       return;
     }
     await signup(formData);

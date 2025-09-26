@@ -50,7 +50,12 @@ function Payments() {
                         bookingId: bookingid,
                         paymentMethod: selectedMethod
                     },
-                    { withCredentials: true }
+                    {
+                        headers: {
+                            Authorization: `Bearer ${user.token}`
+                        },
+                        withCredentials: true
+                    }
                 );
                 console.log('Response from bookingFlow:', response.data);
 
@@ -143,7 +148,10 @@ function Payments() {
     useEffect(() => {
         const fetchBookingDetails = async () => {
             try {
-                const response = await axios.get(`http://localhost:8000/api/bookings/${bookingid}`, { withCredentials: true });
+                const response = await axios.get(`http://localhost:8000/api/bookings/${bookingid}`, {
+                    headers: { Authorization: `Bearer ${user.token}` },
+                    withCredentials: true
+                });
                 if (response.data && response.data.amount) {
                     setAmount(response.data.amount);
 

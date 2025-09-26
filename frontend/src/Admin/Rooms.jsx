@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { useRoomContext } from '../hooks/useRoomContext';
+import { useAuthContext } from '../hooks/useAuthContext';
 
 
 const CloseIcon = () => (
@@ -351,7 +352,8 @@ const AddEditRoomModal = ({ isOpen, onClose, onSave, roomData }) => {
 const Rooms = () => {
   const { rooms, dispatch } = useRoomContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentRoom, setCurrentRoom] = useState(null); 
+  const [currentRoom, setCurrentRoom] = useState(null);
+  const { user } = useAuthContext();
 
 
   useEffect(() => {
@@ -359,8 +361,9 @@ const Rooms = () => {
       const response = await axios.get('http://localhost:8000/api/rooms', {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': `Bearer ${user.token}`,
         },
+        withCredentials: true
       });
       const data = response.data;
       if (response.status === 200) {
@@ -372,7 +375,7 @@ const Rooms = () => {
   }, [dispatch]);
 
   const handleOpenModal = () => {
-    setCurrentRoom(null); 
+    setCurrentRoom(null);
     setIsModalOpen(true);
   };
 
@@ -404,7 +407,7 @@ const Rooms = () => {
 
   const handleSaveRoom = async (savedData) => {
     const roomPayload = {
-      type: savedData.roomType.toLowerCase(), 
+      type: savedData.roomType.toLowerCase(),
       capacity: parseInt(savedData.capacity),
       rate: parseInt(savedData.nightlyRate),
       isReserved: savedData.isReserved || false,

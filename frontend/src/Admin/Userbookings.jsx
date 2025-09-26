@@ -86,7 +86,7 @@ const Userbookings = () => {
     useEffect(() => {
         const fetchBookings = async () => {
             try {
-                const response = await axios.get('http://localhost:8000/api/bookings');
+                const response = await axios.get('https://hotelmanagement-5ymkn.sevalla.app/api/bookings');
                 setBookings(response.data);
             } catch (err) {
                 console.error("Failed to fetch bookings:", err);

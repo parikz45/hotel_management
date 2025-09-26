@@ -6,25 +6,16 @@ const http = require("http");
 const dotenv = require("dotenv");
 dotenv.config();
 
-// Routes
-const bookingsRoute = require('./routes/bookings');
-const usersRoute = require('./routes/auth');
-const reviewsRoute = require('./routes/reviews');
-const roomsRoute = require('./routes/rooms');
-const paymentsRoute = require('./routes/payments');
-const bookingFlowRoute = require('./routes/bookingFlow');
-
-// Middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// CORS setup
+// ======================
+// CORS CONFIGURATION
+// ======================
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:5174",
   "https://deepseahotel.vercel.app"
 ];
 
+// Apply CORS middleware
 app.use(cors({
   origin: allowedOrigins,
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
@@ -32,21 +23,37 @@ app.use(cors({
   allowedHeaders: ["Content-Type", "authorization"]
 }));
 
-// Logging requests (optional but useful for debugging)
+// Handle preflight OPTIONS requests
+app.options('*', cors({
+  origin: allowedOrigins,
+  credentials: true,
+  allowedHeaders: ["Content-Type", "authorization"]
+}));
+
+// ======================
+// BODY PARSERS
+// ======================
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// ======================
+// REQUEST LOGGER (optional)
+// ======================
 app.use((req, res, next) => {
   console.log(`${req.method} request for '${req.url}' - body:`, req.body);
   next();
 });
 
-// MongoDB connection
-mongoose.connect(process.env.Mongo_Url, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
-.then(() => console.log('MongoDB connected'))
-.catch(err => console.error("MongoDB connection error:", err));
+// ======================
+// ROUTES
+// ======================
+const bookingsRoute = require('./routes/bookings');
+const usersRoute = require('./routes/auth');
+const reviewsRoute = require('./routes/reviews');
+const roomsRoute = require('./routes/rooms');
+const paymentsRoute = require('./routes/payments');
+const bookingFlowRoute = require('./routes/bookingFlow');
 
-// Routes (after middleware)
 app.use('/api/auth', usersRoute);
 app.use('/api/bookings', bookingsRoute);
 app.use('/api/reviews', reviewsRoute);
@@ -54,8 +61,20 @@ app.use('/api/rooms', roomsRoute);
 app.use('/api/payments', paymentsRoute);
 app.use('/api/bookingFlow', bookingFlowRoute);
 
-// Start server
-const PORT = process.env.PORT || 8000;  // dynamic port for Sevalla
+// ======================
+// MONGODB CONNECTION
+// ======================
+mongoose.connect(process.env.Mongo_Url, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+.then(() => console.log('MongoDB connected'))
+.catch(err => console.error("MongoDB connection error:", err));
+
+// ======================
+// START SERVER
+// ======================
+const PORT = process.env.PORT || 8000;
 const server = http.createServer(app);
 
 server.listen(PORT, () => {

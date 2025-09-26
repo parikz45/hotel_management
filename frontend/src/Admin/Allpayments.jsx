@@ -35,7 +35,7 @@ const Allpayments = () => {
         const fetchPayments = async () => {
             try {
                 // API call to your backend endpoint
-                const response = await axios.get('http://localhost:8000/api/payments');
+                const response = await axios.get('https://hotelmanagement-5ymkn.sevalla.app/api/payments');
                 setPayments(response.data);
             } catch (err) {
                 console.error("Failed to fetch payments:", err);

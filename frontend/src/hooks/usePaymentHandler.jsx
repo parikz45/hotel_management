@@ -14,7 +14,7 @@ export const usePaymentHandler = (bookingid, selectedMethod) => {
 
       try {
         const response = await axios.post(
-          "http://localhost:8000/api/bookingFlow/bookRoom",
+          "https://hotelmanagement-5ymkn.sevalla.app/api/bookingFlow/bookRoom",
           { bookingId: bookingid, paymentMethod: selectedMethod },
           { withCredentials: true }
         );

@@ -23,7 +23,7 @@ export const useReview = (userId) => {
     if (!reviewBookingId) return;
     try {
       const booking = bookings.find((b) => (b._id || b.id) === reviewBookingId);
-      await axios.post(`http://localhost:8000/api/reviews`, {
+      await axios.post(`https://hotelmanagement-5ymkn.sevalla.app/api/reviews`, {
         user: userId,
         room: booking.room._id,
         rating,

@@ -358,7 +358,7 @@ const Rooms = () => {
 
   useEffect(() => {
     const fetchAllRooms = async () => {
-      const response = await axios.get('http://localhost:8000/api/rooms', {
+      const response = await axios.get('https://hotelmanagement-5ymkn.sevalla.app/api/rooms', {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${user.token}`,

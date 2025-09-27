@@ -14,7 +14,7 @@ function AdminUsers() {
 
         const fetchUsers = async () => {
             try {
-                const response = await axios.get("http://localhost:8000/api/auth/users", {
+                const response = await axios.get("https://hotelmanagement-5ymkn.sevalla.app/api/auth/users", {
                     headers: { Authorization: `Bearer ${user.token}` },
                     withCredentials: true,
                 });

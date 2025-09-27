@@ -11,7 +11,7 @@ export const useSignup = () => {
         setIsLoading(true);
         setError(null);
         try {
-            const response = await axios.post("http://localhost:8000/api/auth/signup", { username, email, phone, name, password });
+            const response = await axios.post("https://hotelmanagement-5ymkn.sevalla.app/api/auth/signup", { username, email, phone, name, password });
             if (response.status !== 201) {
                 throw new Error("Signup failed");
             }

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { useAuthContext } from '../hooks/useAuthContext';
 
 // --- Helper Components & Icons ---
 
@@ -30,12 +31,18 @@ const Allpayments = () => {
     const [payments, setPayments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const { user } = useAuthContext();
 
     useEffect(() => {
         const fetchPayments = async () => {
             try {
                 // API call to your backend endpoint
-                const response = await axios.get('https://hotelmanagement-5ymkn.sevalla.app/api/payments');
+                const response = await axios.get('https://hotelmanagement-5ymkn.sevalla.app/api/payments', {
+                    headers: {
+                        Authorization: `Bearer ${user.token}`
+                    },
+                    withCredentials: true
+                });
                 setPayments(response.data);
             } catch (err) {
                 console.error("Failed to fetch payments:", err);

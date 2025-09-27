@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '../Navbar/Navbar';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useAuthContext } from '../../hooks/useAuthContext';
 
 function Payments() {
     const { bookingid } = useParams();
     const { user } = useAuthContext();
+    const navigate = useNavigate();
 
     const [selectedMethod, setSelectedMethod] = useState('credit_card');
     const [message, setMessage] = useState(null);
@@ -17,7 +18,7 @@ function Payments() {
     const [paymentMethod, setPaymentMethod] = useState("");
     const [checkinDate, setCheckinDate] = useState("");
     const [checkoutDate, setCheckoutDate] = useState("");
-    const [nights,setNights]=useState(0);
+    const [nights, setNights] = useState(0);
 
 
     const paymentMethods = {
@@ -49,7 +50,12 @@ function Payments() {
                         bookingId: bookingid,
                         paymentMethod: selectedMethod
                     },
-                    { withCredentials: true }
+                    {
+                        headers: {
+                            Authorization: `Bearer ${user.token}`
+                        },
+                        withCredentials: true
+                    }
                 );
                 console.log('Response from bookingFlow:', response.data);
 
@@ -59,6 +65,14 @@ function Payments() {
                         title: 'Booking Confirmed!',
                         text: 'Your booking has been confirmed. Please pay at the front desk upon check-in.'
                     });
+
+                    // Automatically navigate after 3 seconds
+                    setTimeout(() => {
+                        navigate(`/profile/${user._id}`, {
+                            state: { paymentComplete: true },
+                            replace: true // Replace current entry in history
+                        });
+                    }, 3000);
                 }
                 else if (selectedMethod === 'upi' || selectedMethod === 'net_banking') {
                     setMessage({
@@ -66,6 +80,14 @@ function Payments() {
                         text: "Your booking has been confirmed. You will receive an email with your booking details shortly.",
                         isSuccess: true,
                     });
+
+                    // Automatically navigate after 3 seconds
+                    setTimeout(() => {
+                        navigate(`/profile/${user._id}`, {
+                            state: { paymentComplete: true },
+                            replace: true // Replace current entry in history
+                        });
+                    }, 3000);
                 }
                 else {
                     if (response.status === 200) {
@@ -74,6 +96,14 @@ function Payments() {
                             text: response.data.message || "Your booking has been confirmed.",
                             isSuccess: true,
                         });
+
+                        // Automatically navigate after 3 seconds
+                        setTimeout(() => {
+                            navigate(`/profile/${user._id}`, {
+                                state: { paymentComplete: true },
+                                replace: true // Replace current entry in history
+                            });
+                        }, 3000);
                     } else {
                         setMessage({
                             title: "Payment Failed!",
@@ -118,7 +148,10 @@ function Payments() {
     useEffect(() => {
         const fetchBookingDetails = async () => {
             try {
-                const response = await axios.get(`http://localhost:8000/api/bookings/${bookingid}`, { withCredentials: true });
+                const response = await axios.get(`http://localhost:8000/api/bookings/${bookingid}`, {
+                    headers: { Authorization: `Bearer ${user.token}` },
+                    withCredentials: true
+                });
                 if (response.data && response.data.amount) {
                     setAmount(response.data.amount);
 
@@ -263,7 +296,21 @@ function Payments() {
                         )}
                         <h2 className="text-2xl font-bold mb-2 text-gray-900">{message.title}</h2>
                         <p className="text-sm text-gray-600 mb-4">{message.text}</p>
-                        <button onClick={() => setMessage(null)} className="bg-blue-600 text-white font-semibold py-2 px-6 rounded-lg hover:bg-blue-700 transition-colors">OK</button>
+                        <button
+                            onClick={() => {
+                                setMessage(null);
+                                if (message.isSuccess) {
+                                    // Navigate to profile with state indicating payment is complete
+                                    navigate(`/profile/${user._id}`, {
+                                        state: { paymentComplete: true },
+                                        replace: true // This replaces the current page in history
+                                    });
+                                }
+                            }}
+                            className="bg-blue-600 text-white font-semibold py-2 px-6 rounded-lg hover:bg-blue-700 transition-colors"
+                        >
+                            {message.isSuccess ? 'Go to Profile' : 'OK'}
+                        </button>
                     </div>
                 </div>
             )}

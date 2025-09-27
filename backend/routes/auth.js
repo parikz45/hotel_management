@@ -13,6 +13,6 @@ router.get("/getUserId/:username", requireAuth, checkAdminRole, getUserIdByUsern
 //to assign admin role, you need to provide the user ID in the request body,
 //which can be obtained from the above endpoint
 router.post("/assignAdminRole", requireAuth, checkAdminRole, assignAdminRole);
-router.get("/users", getAllUsers);
+router.get("/users", requireAuth, checkAdminRole, getAllUsers);
 
 module.exports = router;

@@ -87,7 +87,7 @@ function IndividualRoom() {
 
   const images = Array.isArray(roomData.images)
     ? roomData.images.filter((img) => typeof img === "string" && img.trim() !== "")
-        .map((img) => (img.startsWith("http") ? img : "/" + img))
+      .map((img) => (img.startsWith("http") ? img : "/" + img))
     : roomData.images && typeof roomData.images === "string"
       ? [roomData.images.startsWith("http") ? roomData.images : "/" + roomData.images]
       : [];
@@ -98,6 +98,14 @@ function IndividualRoom() {
   const handleProceed = async () => {
     if (!checkInDate || !checkOutDate) {
       showToast("Please select both check-in and check-out dates", "error");
+      return;
+    }
+    if (new Date(checkOutDate) <= new Date(checkInDate)) {
+      showToast("Check-out date must be after check-in date", "error");
+      return;
+    }
+    if (new Date(checkInDate) < new Date()) {
+      showToast("Check-in date must be in the future", "error");
       return;
     }
 
@@ -111,8 +119,7 @@ function IndividualRoom() {
         `http://localhost:8000/api/rooms/available/${id}`,
         { params: { checkin: checkInDate, checkout: checkOutDate } }
       );
-
-      if (!checkResponse.data.available) {
+      if (!checkResponse.data) {
         showToast("Room is already booked for the selected dates", "error");
         return;
       }
@@ -190,8 +197,8 @@ function IndividualRoom() {
               </defs>
             </svg>
             {roomData.rating ? <div className="flex items-center gap-2 mb-4">{renderStars(roomData.rating)}</div> : <p className="text-gray-500 mb-4">No ratings yet</p>}
-
-            <h1 className="text-4xl font-bold text-blue-900 mb-4">{roomData.type.charAt(0).toUpperCase() + roomData.type.slice(1)} Room</h1>
+            {console.log(roomData)}
+            <h1 className="text-4xl font-bold text-blue-900 mb-4">{roomData && roomData.type.charAt(0).toUpperCase() + roomData.type.slice(1)} Room</h1>
             <p className="text-gray-600 mb-2 text-lg">Capacity: {roomData.capacity}</p>
             <p className="text-gray-600 font-bold mb-4 text-lg">Price: ₹{roomData.rate}/night</p>
             <p className="text-gray-700 mb-6">{roomData.desc}</p>

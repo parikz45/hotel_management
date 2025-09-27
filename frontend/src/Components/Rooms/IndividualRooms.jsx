@@ -53,7 +53,7 @@ function IndividualRoom() {
   useEffect(() => {
     const fetchRoomData = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/api/rooms/${id}`);
+        const response = await axios.get(`https://hotelmanagement-5ymkn.sevalla.app/api/rooms/${id}`);
         setRoomData(response.data);
       } catch (error) {
         console.error("Error fetching room data:", error);
@@ -66,7 +66,7 @@ function IndividualRoom() {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/api/reviews/room/${id}`);
+        const response = await axios.get(`https://hotelmanagement-5ymkn.sevalla.app/api/reviews/room/${id}`);
         const reviews = response.data;
         if (reviews.length > 0) {
           const avgRating = reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
@@ -116,7 +116,7 @@ function IndividualRoom() {
 
     try {
       const checkResponse = await axios.get(
-        `http://localhost:8000/api/rooms/available/${id}`,
+        `https://hotelmanagement-5ymkn.sevalla.app/api/rooms/available/${id}`,
         { params: { checkin: checkInDate, checkout: checkOutDate } }
       );
       if (!checkResponse.data) {
@@ -125,7 +125,7 @@ function IndividualRoom() {
       }
 
       const response = await axios.post(
-        "http://localhost:8000/api/bookings",
+        "https://hotelmanagement-5ymkn.sevalla.app/api/bookings",
         {
           room: id,
           checkinDate: checkInDate,

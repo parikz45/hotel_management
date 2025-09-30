@@ -77,6 +77,7 @@ function RoomTypes() {
   useEffect(() => {
     const fetchRooms = async () => {
       try {
+        console.log("api:", api); // Debugging line
         const response = await axios.get(`${api}/api/rooms`);
         //okay
         console.log(response.data);

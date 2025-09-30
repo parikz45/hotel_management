@@ -11,7 +11,9 @@ dotenv.config();
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:5174",
-  "https://deepseahotel.vercel.app"
+  "https://deepseahotel.vercel.app",
+  "https://hotel-management-zeta-livid.vercel.app",
+  "https://hotel-management-7y3y.onrender.com"
 ];
 
 // Apply CORS middleware

@@ -6,7 +6,7 @@ export const useReview = (userId) => {
   const [reviewBookingId, setReviewBookingId] = useState(null);
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState("");
-  const api = process.env.REACT_APP_PUBLIC_KEY
+  const api = process.env.REACT_APP_PUBLIC_KEY || "http://localhost:8000"
 
   const openReviewModal = (bookingId) => {
     setReviewBookingId(bookingId);

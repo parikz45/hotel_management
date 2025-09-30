@@ -5,7 +5,7 @@ export const useBookings = (user) => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const userId = user?._id;
-  const api = process.env.REACT_APP_PUBLIC_KEY
+  const api = process.env.REACT_APP_PUBLIC_KEY || "http://localhost:8000"
 
   useEffect(() => {
     if (!userId) return;

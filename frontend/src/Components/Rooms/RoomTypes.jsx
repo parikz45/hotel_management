@@ -6,7 +6,7 @@ import axios from "axios";
 import { Star } from "lucide-react";
 
 function RoomTypes() {
-  const api = process.env.REACT_APP_PUBLIC_KEY
+  const api = process.env.REACT_APP_PUBLIC_KEY || "http://localhost:8000"
   const navigate = useNavigate();
 
   const [search, setSearch] = useState("");

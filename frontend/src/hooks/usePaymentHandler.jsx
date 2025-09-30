@@ -4,7 +4,7 @@ import axios from "axios";
 export const usePaymentHandler = (bookingid, selectedMethod) => {
   const [message, setMessage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const api = process.env.REACT_APP_PUBLIC_KEY
+  const api = process.env.REACT_APP_PUBLIC_KEY || "http://localhost:8000"
 
   const handlePayment = (amount) => {
     setIsLoading(true);

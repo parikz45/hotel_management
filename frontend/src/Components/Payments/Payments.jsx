@@ -19,7 +19,7 @@ function Payments() {
     const [checkinDate, setCheckinDate] = useState("");
     const [checkoutDate, setCheckoutDate] = useState("");
     const [nights, setNights] = useState(0);
-    const api = process.env.REACT_APP_PUBLIC_KEY
+    const api = process.env.REACT_APP_PUBLIC_KEY || "http://localhost:8000"
     const paymentMethods = {
         'credit_card': { text: 'Card Details', isForm: true, icon: 'https://img.icons8.com/color/48/000000/visa.png' },
         'debit_card': { text: 'Card Details', isForm: true, icon: 'https://img.icons8.com/color/48/000000/mastercard.png' },

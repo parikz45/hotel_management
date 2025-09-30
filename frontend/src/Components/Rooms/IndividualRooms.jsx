@@ -7,7 +7,7 @@ import { useAuthContext } from "../../hooks/useAuthContext";
 import { Star } from "lucide-react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-const api = process.env.REACT_APP_PUBLIC_KEY
+const api = process.env.REACT_APP_PUBLIC_KEY || "http://localhost:8000"
 // Reusable toast function
 function showToast(message, type = "info") {
   switch (type) {

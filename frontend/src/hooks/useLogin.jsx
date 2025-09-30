@@ -3,7 +3,7 @@ import { useAuthContext } from "./useAuthContext";
 import { useState } from "react";
 
 export const useLogin = () => {
-    const api = process.env.REACT_APP_PUBLIC_KEY
+    const api = process.env.REACT_APP_PUBLIC_KEY || "http://localhost:8000"
     const { dispatch } = useAuthContext();
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);

@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useRoomContext } from '../hooks/useRoomContext';
 import { useAuthContext } from '../hooks/useAuthContext';
 
-const api = process.env.REACT_APP_PUBLIC_KEY
+const api = process.env.REACT_APP_PUBLIC_KEY || "http://localhost:8000"
 
 const CloseIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

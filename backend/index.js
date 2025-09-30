@@ -12,24 +12,38 @@ const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:5174",
   "https://deepseahotel.vercel.app",
-  "https://hotel-management-zeta-livid.vercel.app",
-  "https://hotel-management-7y3y.onrender.com"
+  "https://hotel-management-zeta-livid.vercel.app"
 ];
 
-// Apply CORS middleware
-app.use(cors({
-  origin: allowedOrigins,
+// More flexible CORS for production
+const corsOptions = {
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or Postman)
+    if (!origin) return callback(null, true);
+
+    // Check if origin is in allowed list
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    // Allow any Vercel app URL
+    if (origin.includes('.vercel.app')) {
+      return callback(null, true);
+    }
+
+    // Block other origins
+    return callback(new Error('Not allowed by CORS'));
+  },
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   credentials: true,
   allowedHeaders: ["Content-Type", "authorization"]
-}));
+};
+
+// Apply CORS middleware
+app.use(cors(corsOptions));
 
 // Handle preflight OPTIONS requests
-app.options('*', cors({
-  origin: allowedOrigins,
-  credentials: true,
-  allowedHeaders: ["Content-Type", "authorization"]
-}));
+app.options('*', cors(corsOptions));
 
 // ======================
 // BODY PARSERS

@@ -7,7 +7,8 @@ import { useAuthContext } from '../../hooks/useAuthContext';
 const Landingpage = () => {
   const navigate = useNavigate();
   const { user } = useAuthContext();
-
+  const api = process.env.REACT_APP_PUBLIC_KEY || "http://localhost:8000";
+  console.log("API URL:", api); // Debugging line to check the API URL
   return (
     <div
       className="relative h-screen w-full bg-cover bg-center"

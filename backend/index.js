@@ -2,7 +2,6 @@ const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 const cors = require("cors");
-const http = require("http");
 const dotenv = require("dotenv");
 dotenv.config();
 
@@ -37,6 +36,17 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // ======================
+// HEALTH CHECK ROUTE (for Render)
+// ======================
+app.get('/', (req, res) => {
+  res.json({ message: 'Hotel Management API is running!', status: 'OK' });
+});
+
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'OK', timestamp: new Date().toISOString() });
+});
+
+// ======================
 // REQUEST LOGGER (optional)
 // ======================
 app.use((req, res, next) => {
@@ -65,18 +75,18 @@ app.use('/api/bookingFlow', bookingFlowRoute);
 // MONGODB CONNECTION
 // ======================
 mongoose.connect(process.env.Mongo_Url, {
-  useNewUrlParser: true,
+  useNewParser: true,
   useUnifiedTopology: true
 })
-.then(() => console.log('MongoDB connected'))
-.catch(err => console.error("MongoDB connection error:", err));
+  .then(() => console.log('MongoDB connected'))
+  .catch(err => console.error("MongoDB connection error:", err));
 
 // ======================
 // START SERVER
 // ======================
 const PORT = process.env.PORT || 8000;
-const server = http.createServer(app);
 
-server.listen(PORT, () => {
+// Use app.listen instead of http.createServer for Render
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Backend running on port ${PORT}`);
 });

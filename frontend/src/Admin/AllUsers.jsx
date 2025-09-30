@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useNavigate } from "react-router-dom";
+const api = process.env.REACT_APP_PUBLIC_KEY
 
 function AdminUsers() {
     const { user } = useAuthContext();
@@ -14,7 +15,7 @@ function AdminUsers() {
 
         const fetchUsers = async () => {
             try {
-                const response = await axios.get("https://hotelmanagement-5ymkn.sevalla.app/api/auth/users", {
+                const response = await axios.get(`${api}/api/auth/users`, {
                     headers: { Authorization: `Bearer ${user.token}` },
                     withCredentials: true,
                 });
@@ -88,8 +89,8 @@ function AdminUsers() {
                                     <td className="px-6 py-4 text-sm">{u.phone || "-"}</td>
                                     <td
                                         className={`px-6 py-4 text-sm font-semibold ${u.role === "admin"
-                                                ? "text-red-600"
-                                                : "text-green-600"
+                                            ? "text-red-600"
+                                            : "text-green-600"
                                             }`}
                                     >
                                         {u.role}

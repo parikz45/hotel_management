@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { useAuthContext } from '../hooks/useAuthContext';
 
 // --- Helper Components & Icons ---
-
+const api = process.env.REACT_APP_PUBLIC_KEY
 const Spinner = () => (
     <div className="flex h-32 items-center justify-center">
         <div className="h-12 w-12 animate-spin rounded-full border-4 border-t-4 border-gray-200 border-t-blue-600"></div>
@@ -37,7 +37,7 @@ const Allpayments = () => {
         const fetchPayments = async () => {
             try {
                 // API call to your backend endpoint
-                const response = await axios.get('https://hotelmanagement-5ymkn.sevalla.app/api/payments', {
+                const response = await axios.get(`${api}/api/payments`, {
                     headers: {
                         Authorization: `Bearer ${user.token}`
                     },

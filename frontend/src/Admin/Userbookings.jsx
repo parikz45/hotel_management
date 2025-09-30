@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { useAuthContext } from '../hooks/useAuthContext';
 
 // --- Helper Components & Icons ---
+const api = process.env.REACT_APP_PUBLIC_KEY
 
 const Spinner = () => (
     <div className="flex h-64 items-center justify-center">
@@ -88,7 +89,7 @@ const Userbookings = () => {
     useEffect(() => {
         const fetchBookings = async () => {
             try {
-                const response = await axios.get('https://hotelmanagement-5ymkn.sevalla.app/api/bookings', {
+                const response = await axios.get(`${api}/api/bookings`, {
                     headers: {
                         Authorization: `Bearer ${user.token}`
                     },

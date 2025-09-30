@@ -4,12 +4,13 @@ import axios from "axios";
 export const useBookingDetails = (bookingid) => {
   const [booking, setBooking] = useState(null);
   const [loading, setLoading] = useState(true);
+  const api = process.env.REACT_APP_PUBLIC_KEY
 
   useEffect(() => {
     const fetchBookingDetails = async () => {
       try {
         const response = await axios.get(
-          `https://hotelmanagement-5ymkn.sevalla.app/api/bookings/${bookingid}`,
+          `${api}/api/bookings/${bookingid}`,
           { withCredentials: true }
         );
         setBooking(response.data);

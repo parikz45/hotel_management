@@ -4,6 +4,7 @@ import axios from "axios";
 export const usePaymentHandler = (bookingid, selectedMethod) => {
   const [message, setMessage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const api = process.env.REACT_APP_PUBLIC_KEY
 
   const handlePayment = (amount) => {
     setIsLoading(true);
@@ -14,7 +15,7 @@ export const usePaymentHandler = (bookingid, selectedMethod) => {
 
       try {
         const response = await axios.post(
-          "https://hotelmanagement-5ymkn.sevalla.app/api/bookingFlow/bookRoom",
+          `${api}/api/bookingFlow/bookRoom`,
           { bookingId: bookingid, paymentMethod: selectedMethod },
           { withCredentials: true }
         );

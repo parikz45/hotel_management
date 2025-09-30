@@ -6,6 +6,7 @@ import axios from "axios";
 import { Star } from "lucide-react";
 
 function RoomTypes() {
+  const api = process.env.REACT_APP_PUBLIC_KEY
   const navigate = useNavigate();
 
   const [search, setSearch] = useState("");
@@ -76,7 +77,7 @@ function RoomTypes() {
   useEffect(() => {
     const fetchRooms = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/api/rooms");
+        const response = await axios.get(`${api}/api/rooms`);
         //okay
         console.log(response.data);
         setRooms(response.data);

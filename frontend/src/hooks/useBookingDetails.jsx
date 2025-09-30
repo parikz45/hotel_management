@@ -4,7 +4,7 @@ import axios from "axios";
 export const useBookingDetails = (bookingid) => {
   const [booking, setBooking] = useState(null);
   const [loading, setLoading] = useState(true);
-  const api = process.env.REACT_APP_PUBLIC_KEY || "http://localhost:8000"
+  const api = import.meta.env.VITE_API_URL || "http://localhost:8000"
 
   useEffect(() => {
     const fetchBookingDetails = async () => {

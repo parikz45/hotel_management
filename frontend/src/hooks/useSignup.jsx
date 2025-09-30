@@ -5,7 +5,7 @@ export const useSignup = () => {
     const { dispatch } = useAuthContext();
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(null);
-    const api = process.env.REACT_APP_PUBLIC_KEY || "http://localhost:8000"
+    const api = import.meta.env.VITE_API_URL || "http://localhost:8000"
 
     const signup = async (formdata) => {
         const { username, email, phone, name, password } = formdata;

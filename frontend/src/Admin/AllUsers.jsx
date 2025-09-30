@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useNavigate } from "react-router-dom";
-const api = process.env.REACT_APP_PUBLIC_KEY || "http://localhost:8000"
+const api = import.meta.env.VITE_API_URL || "http://localhost:8000"
 
 function AdminUsers() {
     const { user } = useAuthContext();

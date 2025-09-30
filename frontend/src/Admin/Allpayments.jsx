@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { useAuthContext } from '../hooks/useAuthContext';
 
 // --- Helper Components & Icons ---
-const api = process.env.REACT_APP_PUBLIC_KEY || "http://localhost:8000"
+const api = import.meta.env.VITE_API_URL || "http://localhost:8000"
 const Spinner = () => (
     <div className="flex h-32 items-center justify-center">
         <div className="h-12 w-12 animate-spin rounded-full border-4 border-t-4 border-gray-200 border-t-blue-600"></div>

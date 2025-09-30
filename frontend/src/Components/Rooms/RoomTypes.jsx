@@ -77,6 +77,7 @@ function RoomTypes() {
     const fetchRooms = async () => {
       try {
         const response = await axios.get("http://localhost:8000/api/rooms");
+        //okay
         console.log(response.data);
         setRooms(response.data);
       } catch (error) {

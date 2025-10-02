@@ -90,10 +90,7 @@ app.use('/api/bookingFlow', bookingFlowRoute);
 // ======================
 // MONGODB CONNECTION
 // ======================
-mongoose.connect(process.env.Mongo_Url, {
-  useNewParser: true,
-  useUnifiedTopology: true
-})
+mongoose.connect(process.env.Mongo_Url)
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.error("MongoDB connection error:", err));
 

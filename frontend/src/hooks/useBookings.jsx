@@ -10,7 +10,7 @@ export const useBookings = (user) => {
     const fetchBookings = async () => {
       try {
         const response = await axios.get(
-          `https://hotelmanagement-5ymkn.sevalla.app/api/bookings/user/${userId}`,
+          `http://localhost:8000/api/bookings/user/${userId}`,
           {
             headers: {
               Authorization: `Bearer ${user.token}`,
@@ -29,7 +29,7 @@ export const useBookings = (user) => {
 
   const cancelBooking = async (bookingId) => {
     try {
-      await axios.delete(`https://hotelmanagement-5ymkn.sevalla.app/api/bookings/${bookingId}`, {
+      await axios.delete(`http://localhost:8000/api/bookings/${bookingId}`, {
         headers: {
           Authorization: `Bearer ${user.token}`,
         },

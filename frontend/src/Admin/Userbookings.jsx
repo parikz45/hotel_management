@@ -88,7 +88,7 @@ const Userbookings = () => {
     useEffect(() => {
         const fetchBookings = async () => {
             try {
-                const response = await axios.get('https://hotelmanagement-5ymkn.sevalla.app/api/bookings', {
+                const response = await axios.get('http://localhost:8000/api/bookings', {
                     headers: {
                         Authorization: `Bearer ${user.token}`
                     },

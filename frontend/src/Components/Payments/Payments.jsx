@@ -51,7 +51,6 @@ function Payments() {
     const [checkinDate, setCheckinDate] = useState("");
     const [checkoutDate, setCheckoutDate] = useState("");
     const [nights, setNights] = useState(0);
-    const navigate = useNavigate();
 
     const [showTerms, setShowTerms] = useState(false);
     const [agreed, setAgreed] = useState(false);

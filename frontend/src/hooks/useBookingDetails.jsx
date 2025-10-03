@@ -9,7 +9,7 @@ export const useBookingDetails = (bookingid) => {
     const fetchBookingDetails = async () => {
       try {
         const response = await axios.get(
-          `https://hotelmanagement-5ymkn.sevalla.app/api/bookings/${bookingid}`,
+          `http://localhost:8000/api/bookings/${bookingid}`,
           { withCredentials: true }
         );
         setBooking(response.data);

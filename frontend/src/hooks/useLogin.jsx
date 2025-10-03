@@ -11,8 +11,8 @@ export const useLogin = () => {
         setIsLoading(true);
         setError(null);
         try {
-            // const response = await axios.post("https://hotelmanagement-5ymkn.sevalla.app/api/auth/login", { username, password });
-            const response = await axios.post("https://hotelmanagement-5ymkn.sevalla.app/api/auth/login", { username, password });
+            // const response = await axios.post("http://localhost:8000/api/auth/login", { username, password });
+            const response = await axios.post("http://localhost:8000/api/auth/login", { username, password });
             if (response.status !== 200) {
                 throw new Error("Login failed");
             }

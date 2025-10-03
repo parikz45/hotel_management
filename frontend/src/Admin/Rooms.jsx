@@ -358,7 +358,7 @@ const Rooms = () => {
 
   useEffect(() => {
     const fetchAllRooms = async () => {
-      const response = await axios.get('https://hotelmanagement-5ymkn.sevalla.app/api/rooms', {
+      const response = await axios.get('http://localhost:8000/api/rooms', {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${user.token}`,
@@ -392,7 +392,7 @@ const Rooms = () => {
   const handleDelete = async (roomId) => {
     if (window.confirm('Are you sure you want to delete this room?')) {
       try {
-        await axios.delete(`https://hotelmanagement-5ymkn.sevalla.app/api/rooms/${roomId}`, {
+        await axios.delete(`http://localhost:8000/api/rooms/${roomId}`, {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -418,7 +418,7 @@ const Rooms = () => {
     console.log('Saving room with data:', roomPayload);
     try {
       if (currentRoom) {
-        const response = await axios.patch(`https://hotelmanagement-5ymkn.sevalla.app/api/rooms/${currentRoom._id}`, roomPayload, {
+        const response = await axios.patch(`http://localhost:8000/api/rooms/${currentRoom._id}`, roomPayload, {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -432,7 +432,7 @@ const Rooms = () => {
 
       } else {
         // Create new room
-        const response = await axios.post('https://hotelmanagement-5ymkn.sevalla.app/api/rooms', roomPayload, {
+        const response = await axios.post('http://localhost:8000/api/rooms', roomPayload, {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${localStorage.getItem('token')}`,

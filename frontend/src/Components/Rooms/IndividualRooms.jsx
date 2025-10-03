@@ -87,7 +87,7 @@ function IndividualRoom() {
 
   const images = Array.isArray(roomData.images)
     ? roomData.images.filter((img) => typeof img === "string" && img.trim() !== "")
-        .map((img) => (img.startsWith("http") ? img : "/" + img))
+      .map((img) => (img.startsWith("http") ? img : "/" + img))
     : roomData.images && typeof roomData.images === "string"
       ? [roomData.images.startsWith("http") ? roomData.images : "/" + roomData.images]
       : [];
@@ -98,6 +98,16 @@ function IndividualRoom() {
   const handleProceed = async () => {
     if (!checkInDate || !checkOutDate) {
       showToast("Please select both check-in and check-out dates", "error");
+      return;
+    }
+    const today = new Date().toISOString().split("T")[0];
+    if (checkInDate < today) {
+      showToast("Check-in date cannot be in the past", "error");
+      return;
+    }
+
+    if (checkOutDate <= checkInDate) {
+      showToast("Check-out date must be after check-in date", "error");
       return;
     }
 
@@ -112,7 +122,7 @@ function IndividualRoom() {
         { params: { checkin: checkInDate, checkout: checkOutDate } }
       );
 
-      if (!checkResponse.data.available) {
+      if (!checkResponse.data) {
         showToast("Room is already booked for the selected dates", "error");
         return;
       }
@@ -131,7 +141,7 @@ function IndividualRoom() {
       );
 
       const booking = response.data;
-      showToast("Booking created! Proceeding to payment...", "success");
+      showToast("Booking created successfully!", "success");
 
       navigate(`/payments/${booking._id}`, {
         state: { ...roomData, checkInDate, checkOutDate },
@@ -163,8 +173,8 @@ function IndividualRoom() {
             <img src={images[currentIndex]} className="w-full h-96 object-cover rounded-xl shadow-md" />
             {images.length > 1 && (
               <>
-                <button onClick={prevImage} className="absolute top-[40%] left-3 bg-black/50 text-white px-3 py-1 rounded-full">{`<`}</button>
-                <button onClick={nextImage} className="absolute top-[40%] right-3 bg-black/50 text-white px-3 py-1 rounded-full">{`>`}</button>
+                <button onClick={prevImage} className="absolute top-[30%] left-3 bg-black/50 text-white px-3 py-1 rounded-full">{`<`}</button>
+                <button onClick={nextImage} className="absolute top-[30%] right-3 bg-black/50 text-white px-3 py-1 rounded-full">{`>`}</button>
                 <div className="flex justify-center mt-3">
                   {images.map((_, idx) => (
                     <div

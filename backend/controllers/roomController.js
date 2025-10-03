@@ -77,12 +77,15 @@ const checkAvailabilty = async (req, res) => {
         const { checkin, checkout } = req.query;
         const roomId = req.params.id;
 
-        const available = await isRoomAvailable(roomId, checkin, checkout);
-        res.status(200).json(available);
+        const checkinDate = new Date(checkin);
+        const checkoutDate = new Date(checkout);
+
+        const available = await isRoomAvailable(roomId, checkinDate, checkoutDate);
+        res.status(200).json(available); 
     } catch (err) {
         res.status(500).json(err);
     }
-}
+};
 
 module.exports = {
     createRoom,

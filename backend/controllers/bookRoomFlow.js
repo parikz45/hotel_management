@@ -5,10 +5,30 @@ const Room = require('../models/Rooms');
 const bookRoomFlow = async (req, res) => {
     try {
         const { bookingId, paymentMethod } = req.body;
+        console.log("Request body:", req.body);
 
-        // Find the existing booking
-        const booking = await Booking.findById(bookingId);
-        if (!booking) return res.status(404).json({ error: 'Booking not found' });
+        const booking = await Booking.findById(bookingId).populate("user").populate("room");
+        console.log("Booking fetched:", booking);
+
+        if (!booking) {
+            console.log("Booking not found for id:", bookingId);
+            return res.status(404).json({ error: 'Booking not found' });
+        }
+
+        if (!booking.user) {
+            console.log("Booking has no associated user!");
+            return res.status(400).json({ error: 'Booking has no associated user' });
+        }
+
+        if (!booking.room) {
+            console.log("Booking has no associated room!");
+            return res.status(400).json({ error: 'Booking has no associated room' });
+        }
+
+        console.log("Booking found:", booking);
+        console.log("Booking.user:", booking.user);
+        console.log("Booking.room:", booking.room);
+
 
         // Create payment record
         const payment = await Payment.create({
@@ -26,6 +46,7 @@ const bookRoomFlow = async (req, res) => {
         // Reserve room
         const room = await Room.findById(booking.room);
         if (!room) return res.status(404).json({ error: 'Room not found' });
+
         room.isReserved = true;
         await room.save();
 
@@ -36,6 +57,7 @@ const bookRoomFlow = async (req, res) => {
             room
         });
     } catch (err) {
+        console.error("Error in bookRoomFlow:", err);
         res.status(500).json({ error: err.message });
     }
 };

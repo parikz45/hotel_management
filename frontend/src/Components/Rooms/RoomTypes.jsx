@@ -69,7 +69,7 @@ function RoomTypes() {
   );
   const goToPage = (page) => {
     setCurrentPage(page);
-    window.scrollTo(0, 0); // Scroll to top when page changes
+    window.scrollTo(0, 0); 
   };
 
   // fetch all rooms
@@ -77,7 +77,6 @@ function RoomTypes() {
     const fetchRooms = async () => {
       try {
         const response = await axios.get("http://localhost:8000/api/rooms");
-        console.log(response.data);
         setRooms(response.data);
       } catch (error) {
         console.error("Error fetching rooms:", error);

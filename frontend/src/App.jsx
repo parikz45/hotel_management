@@ -16,6 +16,8 @@ import AdminUsers from './Admin/AllUsers';
 import Userbookings from './Admin/Userbookings';
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Terms from './Components/Terms/Terms';
+import PaymentReceipt from './Components/Payments/Reciept';
 
 function App() {
   const { user } = useAuthContext();
@@ -32,6 +34,8 @@ function App() {
           <Route path="/rooms/:id" element={<IndividualRooms />} />
           <Route path="/payments/:bookingid" element={<Payments />} />
           <Route path="/profile/:userid" element={user ? <Profile /> : <Navigate to="/login" />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/receipt/:bookingid" element=<PaymentReceipt />  />
           <Route
             path="/admin/rooms"
             element={user?.role === "admin" ? <Rooms /> : <Navigate to="/" />}

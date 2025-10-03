@@ -53,7 +53,7 @@ function IndividualRoom() {
   useEffect(() => {
     const fetchRoomData = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/api/rooms/${id}`);
+        const response = await axios.get(`https://hotelmanagement-5ymkn.sevalla.app/api/rooms/${id}`);
         setRoomData(response.data);
       } catch (error) {
         console.error("Error fetching room data:", error);
@@ -66,7 +66,7 @@ function IndividualRoom() {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/api/reviews/room/${id}`);
+        const response = await axios.get(`https://hotelmanagement-5ymkn.sevalla.app/api/reviews/room/${id}`);
         const reviews = response.data;
         if (reviews.length > 0) {
           const avgRating = reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
@@ -118,17 +118,16 @@ function IndividualRoom() {
 
     try {
       const checkResponse = await axios.get(
-        `http://localhost:8000/api/rooms/available/${id}`,
+        `https://hotelmanagement-5ymkn.sevalla.app/api/rooms/available/${id}`,
         { params: { checkin: checkInDate, checkout: checkOutDate } }
       );
-
       if (!checkResponse.data) {
         showToast("Room is already booked for the selected dates", "error");
         return;
       }
 
       const response = await axios.post(
-        "http://localhost:8000/api/bookings",
+        "https://hotelmanagement-5ymkn.sevalla.app/api/bookings",
         {
           room: id,
           checkinDate: checkInDate,
@@ -200,8 +199,8 @@ function IndividualRoom() {
               </defs>
             </svg>
             {roomData.rating ? <div className="flex items-center gap-2 mb-4">{renderStars(roomData.rating)}</div> : <p className="text-gray-500 mb-4">No ratings yet</p>}
-
-            <h1 className="text-4xl font-bold text-blue-900 mb-4">{roomData.type.charAt(0).toUpperCase() + roomData.type.slice(1)} Room</h1>
+            {console.log(roomData)}
+            <h1 className="text-4xl font-bold text-blue-900 mb-4">{roomData && roomData.type.charAt(0).toUpperCase() + roomData.type.slice(1)} Room</h1>
             <p className="text-gray-600 mb-2 text-lg">Capacity: {roomData.capacity}</p>
             <p className="text-gray-600 font-bold mb-4 text-lg">Price: ₹{roomData.rate}/night</p>
             <p className="text-gray-700 mb-6">{roomData.desc}</p>

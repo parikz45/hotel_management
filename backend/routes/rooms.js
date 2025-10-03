@@ -7,13 +7,15 @@ const {
     editRoom,
     checkAvailabilty
 } = require("../controllers/roomController");
+const checkAdminRole = require("../middleware/checkAdminRole");
+const requireAuth = require("../middleware/requireAuth");
 
-router.post("/", createRoom);
+router.post("/", requireAuth, checkAdminRole, createRoom);
 router.get("/", getAllRooms);
-router.get("/available/:id",checkAvailabilty)
+router.get("/available/:id", checkAvailabilty);
 router.get("/:id", getRoomById);
-router.delete("/:id", deleteRoom);
-router.patch("/:id", editRoom);
+router.delete("/:id", requireAuth, checkAdminRole, deleteRoom);
+router.patch("/:id", requireAuth, checkAdminRole, editRoom);
 
 
 module.exports = router;

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { useRoomContext } from '../hooks/useRoomContext';
+import { useAuthContext } from '../hooks/useAuthContext';
 
 
 const CloseIcon = () => (
@@ -351,16 +352,18 @@ const AddEditRoomModal = ({ isOpen, onClose, onSave, roomData }) => {
 const Rooms = () => {
   const { rooms, dispatch } = useRoomContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentRoom, setCurrentRoom] = useState(null); 
+  const [currentRoom, setCurrentRoom] = useState(null);
+  const { user } = useAuthContext();
 
 
   useEffect(() => {
     const fetchAllRooms = async () => {
-      const response = await axios.get('http://localhost:8000/api/rooms', {
+      const response = await axios.get('https://hotelmanagement-5ymkn.sevalla.app/api/rooms', {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': `Bearer ${user.token}`,
         },
+        withCredentials: true
       });
       const data = response.data;
       if (response.status === 200) {
@@ -372,7 +375,7 @@ const Rooms = () => {
   }, [dispatch]);
 
   const handleOpenModal = () => {
-    setCurrentRoom(null); 
+    setCurrentRoom(null);
     setIsModalOpen(true);
   };
 
@@ -389,7 +392,7 @@ const Rooms = () => {
   const handleDelete = async (roomId) => {
     if (window.confirm('Are you sure you want to delete this room?')) {
       try {
-        await axios.delete(`http://localhost:8000/api/rooms/${roomId}`, {
+        await axios.delete(`https://hotelmanagement-5ymkn.sevalla.app/api/rooms/${roomId}`, {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -404,7 +407,7 @@ const Rooms = () => {
 
   const handleSaveRoom = async (savedData) => {
     const roomPayload = {
-      type: savedData.roomType.toLowerCase(), 
+      type: savedData.roomType.toLowerCase(),
       capacity: parseInt(savedData.capacity),
       rate: parseInt(savedData.nightlyRate),
       isReserved: savedData.isReserved || false,
@@ -415,7 +418,7 @@ const Rooms = () => {
     console.log('Saving room with data:', roomPayload);
     try {
       if (currentRoom) {
-        const response = await axios.patch(`http://localhost:8000/api/rooms/${currentRoom._id}`, roomPayload, {
+        const response = await axios.patch(`https://hotelmanagement-5ymkn.sevalla.app/api/rooms/${currentRoom._id}`, roomPayload, {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -429,7 +432,7 @@ const Rooms = () => {
 
       } else {
         // Create new room
-        const response = await axios.post('http://localhost:8000/api/rooms', roomPayload, {
+        const response = await axios.post('https://hotelmanagement-5ymkn.sevalla.app/api/rooms', roomPayload, {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${localStorage.getItem('token')}`,

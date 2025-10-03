@@ -6,7 +6,7 @@ import { useReview } from "../../hooks/useReview";
 
 const Profile = () => {
   const { user } = useAuthContext();
-  const { bookings, loading, cancelBooking } = useBookings(user._id);
+  const { bookings, loading, cancelBooking } = useBookings(user);
   const [confirmCancelId, setConfirmCancelId] = useState(null);
 
   const {
@@ -57,7 +57,7 @@ const Profile = () => {
                   className="bg-white text-gray-800 rounded-2xl p-8 mb-8 shadow-lg flex flex-col sm:flex-row"
                 >
                   <img
-                    src={`/${booking.room.images[0]}`}
+                    src={`${booking.room.images[0]}`}
                     alt={booking.room.type}
                     className="rounded-xl w-full sm:w-56 h-40 object-cover mb-6 sm:mb-0 sm:mr-8"
                   />
@@ -99,35 +99,35 @@ const Profile = () => {
                       {/* Cancel Booking */}
                       {(booking.status === "pending" ||
                         booking.status === "booked") && (
-                        <>
-                          {confirmCancelId === bookingId ? (
-                            <div className="ml-4 flex space-x-2">
+                          <>
+                            {confirmCancelId === bookingId ? (
+                              <div className="ml-4 flex space-x-2">
+                                <button
+                                  onClick={() => {
+                                    cancelBooking(bookingId);
+                                    setConfirmCancelId(null);
+                                  }}
+                                  className="px-4 py-2 text-sm rounded-lg bg-red-500 text-white hover:bg-red-600"
+                                >
+                                  Yes, Cancel
+                                </button>
+                                <button
+                                  onClick={() => setConfirmCancelId(null)}
+                                  className="px-4 py-2 text-sm rounded-lg bg-gray-300 text-gray-800 hover:bg-gray-400"
+                                >
+                                  No
+                                </button>
+                              </div>
+                            ) : (
                               <button
-                                onClick={() => {
-                                  cancelBooking(bookingId);
-                                  setConfirmCancelId(null);
-                                }}
-                                className="px-4 py-2 text-sm rounded-lg bg-red-500 text-white hover:bg-red-600"
+                                onClick={() => setConfirmCancelId(bookingId)}
+                                className="ml-4 px-4 py-2 text-sm rounded-lg bg-red-500 text-white hover:bg-red-600"
                               >
-                                Yes, Cancel
+                                Cancel Booking
                               </button>
-                              <button
-                                onClick={() => setConfirmCancelId(null)}
-                                className="px-4 py-2 text-sm rounded-lg bg-gray-300 text-gray-800 hover:bg-gray-400"
-                              >
-                                No
-                              </button>
-                            </div>
-                          ) : (
-                            <button
-                              onClick={() => setConfirmCancelId(bookingId)}
-                              className="ml-4 px-4 py-2 text-sm rounded-lg bg-red-500 text-white hover:bg-red-600"
-                            >
-                              Cancel Booking
-                            </button>
-                          )}
-                        </>
-                      )}
+                            )}
+                          </>
+                        )}
 
                       {/* Review button */}
                       {booking.status === "booked" && (
@@ -163,9 +163,8 @@ const Profile = () => {
                 <span
                   key={star}
                   onClick={() => setRating(star)}
-                  className={`cursor-pointer text-2xl transition ${
-                    star <= rating ? "text-yellow-400" : "text-gray-300"
-                  }`}
+                  className={`cursor-pointer text-2xl transition ${star <= rating ? "text-yellow-400" : "text-gray-300"
+                    }`}
                 >
                   ★
                 </span>

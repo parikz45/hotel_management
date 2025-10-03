@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { useAuthContext } from '../hooks/useAuthContext';
 
 // --- Helper Components & Icons ---
 
@@ -82,11 +83,17 @@ const Userbookings = () => {
     const [bookings, setBookings] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const { user } = useAuthContext();
 
     useEffect(() => {
         const fetchBookings = async () => {
             try {
-                const response = await axios.get('http://localhost:8000/api/bookings');
+                const response = await axios.get('https://hotelmanagement-5ymkn.sevalla.app/api/bookings', {
+                    headers: {
+                        Authorization: `Bearer ${user.token}`
+                    },
+                    withCredentials: true
+                });
                 setBookings(response.data);
             } catch (err) {
                 console.error("Failed to fetch bookings:", err);

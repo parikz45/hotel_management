@@ -42,6 +42,7 @@ function showToast(message, type = "info") {
 function Payments() {
     const { bookingid } = useParams();
     const { user } = useAuthContext();
+    const navigate = useNavigate();
 
     const [selectedMethod, setSelectedMethod] = useState('credit_card');
     const [message, setMessage] = useState(null);
@@ -339,7 +340,21 @@ function Payments() {
                         )}
                         <h2 className="text-2xl font-bold mb-2 text-gray-900">{message.title}</h2>
                         <p className="text-sm text-gray-600 mb-4">{message.text}</p>
-                        <button onClick={() => setMessage(null)} className="bg-blue-600 text-white font-semibold py-2 px-6 rounded-lg hover:bg-blue-700 transition-colors">OK</button>
+                        <button
+                            onClick={() => {
+                                setMessage(null);
+                                if (message.isSuccess) {
+                                    // Navigate to profile with state indicating payment is complete
+                                    navigate(`/profile/${user._id}`, {
+                                        state: { paymentComplete: true },
+                                        replace: true // This replaces the current page in history
+                                    });
+                                }
+                            }}
+                            className="bg-blue-600 text-white font-semibold py-2 px-6 rounded-lg hover:bg-blue-700 transition-colors"
+                        >
+                            {message.isSuccess ? 'Go to Profile' : 'OK'}
+                        </button>
                     </div>
                 </div>
             )}

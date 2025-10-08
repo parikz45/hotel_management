@@ -3,6 +3,7 @@ import { useAuthContext } from "./useAuthContext";
 import { useState } from "react";
 
 export const useLogin = () => {
+    const api = import.meta.env.VITE_API_URL || "http://localhost:8000"
     const { dispatch } = useAuthContext();
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -11,8 +12,8 @@ export const useLogin = () => {
         setIsLoading(true);
         setError(null);
         try {
-            // const response = await axios.post("https://hotelmanagement-5ymkn.sevalla.app/api/auth/login", { username, password });
-            const response = await axios.post("http://localhost:8000/api/auth/login", { username, password });
+            // const response = await axios.post("${api}/api/auth/login", { username, password });
+            const response = await axios.post(`${api}/api/auth/login`, { username, password });
             if (response.status !== 200) {
                 throw new Error("Login failed");
             }

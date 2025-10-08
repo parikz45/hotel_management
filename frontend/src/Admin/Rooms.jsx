@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useRoomContext } from '../hooks/useRoomContext';
 import { useAuthContext } from '../hooks/useAuthContext';
 
+const api = import.meta.env.VITE_API_URL || "http://localhost:8000"
 
 const CloseIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -358,7 +359,7 @@ const Rooms = () => {
 
   useEffect(() => {
     const fetchAllRooms = async () => {
-      const response = await axios.get('https://hotelmanagement-5ymkn.sevalla.app/api/rooms', {
+      const response = await axios.get(`${api}/api/rooms`, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${user.token}`,
@@ -392,7 +393,7 @@ const Rooms = () => {
   const handleDelete = async (roomId) => {
     if (window.confirm('Are you sure you want to delete this room?')) {
       try {
-        await axios.delete(`http://localhost:8000/api/rooms/${roomId}`, {
+        await axios.delete(`${api}/api/rooms/${roomId}`, {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -418,7 +419,7 @@ const Rooms = () => {
     console.log('Saving room with data:', roomPayload);
     try {
       if (currentRoom) {
-        const response = await axios.patch(`http://localhost:8000/api/rooms/${currentRoom._id}`, roomPayload, {
+        const response = await axios.patch(`${api}/api/rooms/${currentRoom._id}`, roomPayload, {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -432,7 +433,7 @@ const Rooms = () => {
 
       } else {
         // Create new room
-        const response = await axios.post('http://localhost:8000/api/rooms', roomPayload, {
+        const response = await axios.post(`${api}/api/rooms`, roomPayload, {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${localStorage.getItem('token')}`,

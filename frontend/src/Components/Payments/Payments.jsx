@@ -19,8 +19,7 @@ function Payments() {
     const [checkinDate, setCheckinDate] = useState("");
     const [checkoutDate, setCheckoutDate] = useState("");
     const [nights, setNights] = useState(0);
-
-
+    const api = import.meta.env.VITE_API_URL || "http://localhost:8000"
     const paymentMethods = {
         'credit_card': { text: 'Card Details', isForm: true, icon: 'https://img.icons8.com/color/48/000000/visa.png' },
         'debit_card': { text: 'Card Details', isForm: true, icon: 'https://img.icons8.com/color/48/000000/mastercard.png' },
@@ -45,7 +44,7 @@ function Payments() {
             try {
                 // Call backend to complete booking/payment
                 const response = await axios.post(
-                    'http://localhost:8000/api/bookingFlow/bookRoom',
+                    `${api}/api/bookingFlow/bookRoom`,
                     {
                         bookingId: bookingid,
                         paymentMethod: selectedMethod
@@ -148,7 +147,7 @@ function Payments() {
     useEffect(() => {
         const fetchBookingDetails = async () => {
             try {
-                const response = await axios.get(`http://localhost:8000/api/bookings/${bookingid}`, {
+                const response = await axios.get(`${api}/api/bookings/${bookingid}`, {
                     headers: { Authorization: `Bearer ${user.token}` },
                     withCredentials: true
                 });

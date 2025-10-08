@@ -6,6 +6,7 @@ import axios from "axios";
 import { Star } from "lucide-react";
 
 function RoomTypes() {
+  const api = import.meta.env.VITE_API_URL || "http://localhost:8000"
   const navigate = useNavigate();
 
   const [search, setSearch] = useState("");
@@ -76,7 +77,9 @@ function RoomTypes() {
   useEffect(() => {
     const fetchRooms = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/api/rooms");
+        console.log("api:", api); // Debugging line
+        const response = await axios.get(`${api}/api/rooms`);
+        //okay
         console.log(response.data);
         setRooms(response.data);
       } catch (error) {

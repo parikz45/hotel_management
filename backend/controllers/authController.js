@@ -4,7 +4,7 @@ const User = require('../models/User');
 // Create a token including role
 const createToken = (user) => {
     return jwt.sign(
-        { _id: user._id, role: user.role },  
+        { _id: user._id, role: user.role },
         process.env.JWT_SECRET,
         { expiresIn: '1d' }
     );
@@ -14,17 +14,19 @@ const createToken = (user) => {
 const loginPost = async (req, res) => {
     try {
         const { username, password } = req.body;
+        console.log('waiting for finding user')
         const user = await User.login(username, password);
 
         const token = createToken(user);
-
-        res.status(200).json({ 
+        console.log('Token created');
+        res.status(200).json({
             _id: user._id,
             username: user.username,
             role: user.role,
             token
         });
     } catch (error) {
+        console.log('Error during login:', error.message);
         res.status(400).json({ error: error.message });
     }
 };
@@ -37,7 +39,7 @@ const signupPost = async (req, res) => {
 
         const token = createToken(user);
 
-        res.status(201).json({ 
+        res.status(201).json({
             _id: user._id,
             username: user.username,
             role: user.role,
@@ -53,7 +55,7 @@ const assignAdminRole = async (req, res) => {
     try {
         const { userId } = req.body;
         const updatedUser = await User.findByIdAndUpdate(
-            userId, 
+            userId,
             { role: 'admin' },
             { new: true }
         );

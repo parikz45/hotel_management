@@ -6,6 +6,7 @@ export const useReview = (userId) => {
   const [reviewBookingId, setReviewBookingId] = useState(null);
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState("");
+  const api = import.meta.env.VITE_API_URL || "http://localhost:8000"
 
   const openReviewModal = (bookingId) => {
     setReviewBookingId(bookingId);
@@ -23,7 +24,7 @@ export const useReview = (userId) => {
     if (!reviewBookingId) return;
     try {
       const booking = bookings.find((b) => (b._id || b.id) === reviewBookingId);
-      await axios.post(`https://hotelmanagement-5ymkn.sevalla.app/api/reviews`, {
+      await axios.post(`${api}/api/reviews`, {
         user: userId,
         room: booking.room._id,
         rating,

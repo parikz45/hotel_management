@@ -396,7 +396,7 @@ const Rooms = () => {
         await axios.delete(`${api}/api/rooms/${roomId}`, {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Authorization': `Bearer ${user.token}`,
           },
         });
         dispatch({ type: 'DELETE_ROOM', payload: roomId });
@@ -422,7 +422,7 @@ const Rooms = () => {
         const response = await axios.patch(`${api}/api/rooms/${currentRoom._id}`, roomPayload, {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Authorization': `Bearer ${user.token}`,
           },
         });
 
@@ -436,7 +436,7 @@ const Rooms = () => {
         const response = await axios.post(`${api}/api/rooms`, roomPayload, {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Authorization': `Bearer ${user.token}`,
           },
         });
 

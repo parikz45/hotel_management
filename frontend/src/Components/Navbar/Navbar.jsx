@@ -58,7 +58,7 @@ function Navbar() {
     );
 
     return (
-        <nav className="px-4 lg:px-12 py-3 flex items-center justify-between">
+        <nav className="px-4 lg:px-12 py-3 flex items-center justify-between bg-transparent">
             {/* Logo */}
             <span className="text-[20px] lg:text-[32px] font-bold text-white">
                 DeepSea

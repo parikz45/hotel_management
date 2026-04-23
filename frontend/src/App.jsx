@@ -63,14 +63,15 @@ function App() {
           />
 
         </Routes>
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          pauseOnHover
+          draggable
+          theme="light"
+        />
       </Router>
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        pauseOnHover
-        draggable
-        theme="light"
-      />
+
     </>
   );
 }

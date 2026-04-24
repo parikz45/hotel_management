@@ -1,56 +1,41 @@
-const Booking = require('../models/Bookings');
+const pool = require("../config/db");
 
-// Create a new booking
+// CREATE
 exports.createBooking = async (req, res) => {
-    console.log("Incoming booking body:", req.body);
-    const newBooking = new Booking(req.body);   
-    try {
-        const savedBooking = await newBooking.save();
-        res.status(200).json(savedBooking);
-    } catch (err) {
-        res.status(500).json(err.message);
-    }
+    const { checkinDate, checkoutDate, room, user, amount } = req.body;
+
+    const result = await pool.query(
+        `INSERT INTO bookings
+        (checkin_date, checkout_date, room_id, user_id, amount)
+        VALUES ($1,$2,$3,$4,$5)
+        RETURNING *`,
+        [checkinDate, checkoutDate, room, user, amount]
+    );
+
+    res.status(200).json(result.rows[0]);
 };
 
-// Get all bookings of a specific user
+// GET USER BOOKINGS (WITH ROOM DETAILS)
 exports.getBookingsByUser = async (req, res) => {
-    try {
-        const bookings = await Booking.find({ user: req.params.userId }).populate('room');
-        res.status(200).json(bookings);
-    } catch (err) {
-        res.status(500).json(err);
-    }
+    const result = await pool.query(
+        `SELECT b.*, r.*
+         FROM bookings b
+         JOIN rooms r ON b.room_id = r.id
+         WHERE b.user_id = $1`,
+        [req.params.userId]
+    );
+
+    res.status(200).json(result.rows);
 };
 
-// Get a booking by ID 
-exports.getBookingById = async (req, res) => {
-    try {
-        const booking = await Booking.findById(req.params.id);
-        if (!booking) {
-            return res.status(404).json({ message: 'Booking not found' });
-        }
-        res.status(200).json(booking);
-    } catch (err) {
-        res.status(500).json(err);
-    }
-};
-
-// Get all bookings (admin only)
+// GET ALL (ADMIN)
 exports.getAllBookings = async (req, res) => {
-    try {
-        const bookings = await Booking.find().populate('room').populate('user');
-        res.status(200).json(bookings);
-    } catch (err) {
-        res.status(500).json(err);
-    }
-};
+    const result = await pool.query(
+        `SELECT b.*, r.*, u.username
+         FROM bookings b
+         JOIN rooms r ON b.room_id = r.id
+         JOIN users u ON b.user_id = u.id`
+    );
 
-// Delete a booking
-exports.deleteBooking = async (req, res) => {
-    try {
-        await Booking.findByIdAndDelete(req.params.id);
-        res.status(200).json("Booking has been deleted...");
-    } catch (err) {
-        res.status(500).json(err);
-    }
+    res.status(200).json(result.rows);
 };

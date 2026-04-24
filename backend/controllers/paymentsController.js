@@ -1,11 +1,11 @@
-const Payments=require("../models/Payments");
+const pool = require("../config/db");
 
-// Get all payments (admin only)
+// Get all payments
 exports.getAllPayments = async (req, res) => {
     try {
-        const payments = await Payments.find();
-        res.status(200).json(payments);
+        const result = await pool.query("SELECT * FROM payments");
+        res.status(200).json(result.rows);
     } catch (err) {
-        res.status(500).json(err);
+        res.status(500).json(err.message);
     }
-}; 
+};

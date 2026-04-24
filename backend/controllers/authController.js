@@ -1,100 +1,75 @@
 const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+const pool = require('../config/db');
+const bcrypt = require('bcrypt');
+const validator = require('validator');
 
-// Create a token including role
 const createToken = (user) => {
     return jwt.sign(
-        { _id: user._id, role: user.role },
+        { id: user.id, role: user.role },
         process.env.JWT_SECRET,
         { expiresIn: '1d' }
     );
 };
 
-// Login
+// LOGIN
 const loginPost = async (req, res) => {
     try {
         const { username, password } = req.body;
-        console.log('waiting for finding user')
-        const user = await User.login(username, password);
+
+        const result = await pool.query(
+            "SELECT * FROM users WHERE username = $1",
+            [username]
+        );
+
+        const user = result.rows[0];
+        if (!user) throw Error("Invalid username");
+
+        const isValid = await bcrypt.compare(password, user.password);
+        if (!isValid) throw Error("Invalid username or password");
 
         const token = createToken(user);
-        console.log('Token created');
+
         res.status(200).json({
-            _id: user._id,
+            id: user.id,
             username: user.username,
             role: user.role,
             token
         });
+
     } catch (error) {
-        console.log('Error during login:', error.message);
         res.status(400).json({ error: error.message });
     }
 };
 
-// Signup
+// SIGNUP
 const signupPost = async (req, res) => {
     try {
         const { username, email, password, name, phone } = req.body;
-        const user = await User.signup(username, email, password, name, phone);
 
+        if (!validator.isEmail(email)) throw Error("Invalid email");
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const result = await pool.query(
+            `INSERT INTO users (username, email, password, name, phone)
+             VALUES ($1,$2,$3,$4,$5)
+             RETURNING *`,
+            [username, email, hashedPassword, name, phone]
+        );
+
+        const user = result.rows[0];
         const token = createToken(user);
 
         res.status(201).json({
-            _id: user._id,
+            id: user.id,
             username: user.username,
             role: user.role,
             token
         });
+
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
 };
 
-// Assign admin role
-const assignAdminRole = async (req, res) => {
-    try {
-        const { userId } = req.body;
-        const updatedUser = await User.findByIdAndUpdate(
-            userId,
-            { role: 'admin' },
-            { new: true }
-        );
-        res.status(200).json({ message: 'User role updated to admin', updatedUser });
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
-};
-
-// Get userId by username
-const getUserIdByUsername = async (req, res) => {
-    try {
-        const { username } = req.params;
-        const user = await User.findOne({ username });
-
-        if (!user) {
-            return res.status(404).json({ error: 'User not found' });
-        }
-
-        res.status(200).json({ userId: user._id });
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
-};
-
-// Get all users (for admin use)
-const getAllUsers = async (req, res) => {
-    try {
-        const users = await User.find({}, '-password');
-        res.status(200).json(users);
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
-};
-
-module.exports = {
-    loginPost,
-    signupPost,
-    getUserIdByUsername,
-    assignAdminRole,
-    getAllUsers
-};
+module.exports = { loginPost, signupPost };

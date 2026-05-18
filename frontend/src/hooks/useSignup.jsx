@@ -5,13 +5,14 @@ export const useSignup = () => {
     const { dispatch } = useAuthContext();
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(null);
+    const api = import.meta.env.VITE_API_URL || "http://localhost:8000"
 
     const signup = async (formdata) => {
         const { username, email, phone, name, password } = formdata;
         setIsLoading(true);
         setError(null);
         try {
-            const response = await axios.post("http://localhost:8000/api/auth/signup", { username, email, phone, name, password });
+            const response = await axios.post(`${api}/api/auth/signup`, { username, email, phone, name, password });
             if (response.status !== 201) {
                 throw new Error("Signup failed");
             }

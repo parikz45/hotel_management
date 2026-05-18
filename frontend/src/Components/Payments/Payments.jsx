@@ -51,14 +51,9 @@ function Payments() {
     const [checkinDate, setCheckinDate] = useState("");
     const [checkoutDate, setCheckoutDate] = useState("");
     const [nights, setNights] = useState(0);
+    const [roomType, setRoomType] = useState("");
 
-    const [showTerms, setShowTerms] = useState(false);
-    const [agreed, setAgreed] = useState(false);
-
-    // states for error & loading booking
-    const [error, setError] = useState(null);
-    const [loadingBooking, setLoadingBooking] = useState(true);
-
+    const api = import.meta.env.VITE_API_URL || "http://localhost:8000"
     const paymentMethods = {
         'credit_card': { text: 'Card Details', isForm: true, icon: 'https://img.icons8.com/color/48/000000/visa.png' },
         'debit_card': { text: 'Card Details', isForm: true, icon: 'https://img.icons8.com/color/48/000000/mastercard.png' },
@@ -83,7 +78,7 @@ function Payments() {
             try {
                 console.log("Sending bookingId:", bookingid, "method:", selectedMethod);
                 const response = await axios.post(
-                    "http://localhost:8000/api/bookingFlow/bookRoom",
+                    `${api}/api/bookingFlow/bookRoom`,
                     {
                         bookingId: bookingid,
                         paymentMethod: selectedMethod,
@@ -91,9 +86,13 @@ function Payments() {
                     { withCredentials: true }
                 );
 
-                if (response.status === 200) {
-                    showToast("Payment successful!", "success");
-                    navigate(`/receipt/${bookingid}`);
+                    // Automatically navigate after 3 seconds
+                    setTimeout(() => {
+                        navigate(`/profile/${user.id}`, {
+                            state: { paymentComplete: true },
+                            replace: true // Replace current entry in history
+                        });
+                    }, 3000);
                 }
                 else {
                     setMessage({
@@ -101,7 +100,40 @@ function Payments() {
                         text: response.data.error || "There was an issue processing your payment.",
                         isSuccess: false,
                     });
+
+                    // Automatically navigate after 3 seconds
+                    setTimeout(() => {
+                        navigate(`/profile/${user.id}`, {
+                            state: { paymentComplete: true },
+                            replace: true // Replace current entry in history
+                        });
+                    }, 3000);
                 }
+                else {
+                    if (response.status === 200) {
+                        setMessage({
+                            title: "Payment Successful!",
+                            text: response.data.message || "Your booking has been confirmed.",
+                            isSuccess: true,
+                        });
+
+                        // Automatically navigate after 3 seconds
+                        setTimeout(() => {
+                            navigate(`/profile/${user.id}`, {
+                                state: { paymentComplete: true },
+                                replace: true // Replace current entry in history
+                            });
+                        }, 3000);
+                    } else {
+                        setMessage({
+                            title: "Payment Failed!",
+                            text: response.data.error || "There was an issue processing your payment.",
+                            isSuccess: false,
+                        });
+                    }
+                }
+
+                console.log('Booking & payment response:', response.data);
             } catch (err) {
                 setMessage({
                     isSuccess: false,
@@ -138,16 +170,16 @@ function Payments() {
 
         const fetchBookingDetails = async () => {
             try {
-                const response = await axios.get(
-                    `http://localhost:8000/api/bookings/${bookingid}`,
-                    { withCredentials: true }
-                );
+                const response = await axios.get(`${api}/api/bookings/${bookingid}`, {
+                    headers: { Authorization: `Bearer ${user.token}` },
+                    withCredentials: true
+                });
+                if (response.data && response.data.amount) {
+                    setAmount(response.data.amount);
 
-                if (!response.data) {
-                    setError("Booking not found.");
-                } else {
-                    const checkin = new Date(response.data.checkinDate);
-                    const checkout = new Date(response.data.checkoutDate);
+                    const checkin = new Date(response.data.checkin_date);
+                    const checkout = new Date(response.data.checkout_date);
+                    setRoomType(response.data.type);
 
                     setCheckinDate(formatDate(checkin));
                     setCheckoutDate(formatDate(checkout));
@@ -224,7 +256,7 @@ function Payments() {
                         <h2 className="text-2xl lg:text-3xl font-semibold mb-2">Booking Summary</h2>
                         <div className="flex justify-between items-center font-semibold lg:mt-[20px] text-gray-600">
                             <span>Room Type</span>
-                            <span className="text-gray-900 font-medium">Deluxe Suite</span>
+                            <span className="text-gray-900 font-medium">{roomType}</span>
                         </div>
                         <div className="flex justify-between items-center text-gray-600 mt-2">
                             <span>Check-in Date</span>
@@ -344,7 +376,7 @@ function Payments() {
                                 setMessage(null);
                                 if (message.isSuccess) {
                                     // Navigate to profile with state indicating payment is complete
-                                    navigate(`/profile/${user._id}`, {
+                                    navigate(`/profile/${user.id}`, {
                                         state: { paymentComplete: true },
                                         replace: true // This replaces the current page in history
                                     });

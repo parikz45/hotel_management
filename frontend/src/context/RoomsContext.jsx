@@ -12,11 +12,11 @@ export const roomsReducer = (state, action) => {
             return { ...state, rooms: [...state.rooms, action.payload] };
         case 'UPDATE_ROOM':
             const updatedRooms = state.rooms.map(room =>
-                room._id === action.payload._id ? action.payload : room
+                room.id === action.payload.id ? action.payload : room
             );
             return { ...state, rooms: updatedRooms };
         case 'DELETE_ROOM':
-            return { ...state, rooms: state.rooms.filter(room => room._id !== action.payload) };
+            return { ...state, rooms: state.rooms.filter(room => room.id !== action.payload) };
         default:
             return state;
     }

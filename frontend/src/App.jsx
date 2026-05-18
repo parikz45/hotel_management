@@ -16,8 +16,7 @@ import AdminUsers from './Admin/AllUsers';
 import Userbookings from './Admin/Userbookings';
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Terms from './Components/Terms/Terms';
-import PaymentReceipt from './Components/Payments/Reciept';
+import { GlobalPopup } from './Components/GlobalPopup/globalPopup';
 
 function App() {
   const { user } = useAuthContext();
@@ -67,14 +66,15 @@ function App() {
           />
 
         </Routes>
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          pauseOnHover
+          draggable
+          theme="light"
+        />
       </Router>
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        pauseOnHover
-        draggable
-        theme="light"
-      />
+      <GlobalPopup />
     </>
   );
 }

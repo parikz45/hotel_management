@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { useAuthContext } from '../hooks/useAuthContext';
 
 // --- Helper Components & Icons ---
+const api = import.meta.env.VITE_API_URL || "http://localhost:8000"
 
 const Spinner = () => (
     <div className="flex h-64 items-center justify-center">
@@ -65,7 +66,7 @@ const BookingCard = ({ booking }) => {
                     </div>
                     <div>
                         <p className="font-semibold text-gray-500">Room ID</p>
-                        <p className="text-gray-800">{booking.room?._id}</p>
+                        <p className="text-gray-800">{booking.room?.id}</p>
                     </div>
                 </div>
                 <div className="mt-6 flex items-center justify-start gap-4">
@@ -88,7 +89,7 @@ const Userbookings = () => {
     useEffect(() => {
         const fetchBookings = async () => {
             try {
-                const response = await axios.get('http://localhost:8000/api/bookings', {
+                const response = await axios.get(`${api}/api/bookings`, {
                     headers: {
                         Authorization: `Bearer ${user.token}`
                     },
@@ -123,7 +124,7 @@ const Userbookings = () => {
                         <div className="p-8 text-center text-red-600 rounded-lg bg-white shadow-md">{error}</div>
                     ) : bookings.length > 0 ? (
                         bookings.map((booking) => (
-                            <BookingCard key={booking._id} booking={booking} />
+                            <BookingCard key={booking.id} booking={booking} />
                         ))
                     ) : (
                         <div className="p-8 text-center text-gray-500 rounded-lg bg-white shadow-md">

@@ -14,7 +14,7 @@ export const useRoomContext = () => {
     // fetch all rooms
     const fetchRooms = async () => {
         try {
-            const response = await axios.get("http://localhost:8000/api/rooms");
+            const response = await axios.get("${api}/api/rooms");
             setRooms(response.data);
         } catch (error) {
             console.error("Error fetching rooms:", error);

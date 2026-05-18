@@ -58,9 +58,8 @@ userSchema.statics.signup = async function (username, email, password, name, pho
     if (existsUsername) {
         throw Error('Username is already in use');
     }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
     const user = await this.create({ username, email, password: hashedPassword, name, phone });
 
     return user;
@@ -74,6 +73,9 @@ userSchema.statics.login = async function (username, password) {
     if (!user) {
         throw Error('Invalid username ');
     }
+
+    // console.log("Entered password:", password);
+    // console.log("Stored hash:", user.password);
 
     const isValid = await bcrypt.compare(password, user.password);
     if (!isValid) {

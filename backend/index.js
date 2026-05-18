@@ -1,10 +1,18 @@
 const express = require("express");
 const app = express();
-const mongoose = require("mongoose");
 const cors = require("cors");
-const http = require("http");
 const dotenv = require("dotenv");
+
 dotenv.config();
+
+// ======================
+// DB CONNECTION
+// ======================
+const pool = require("./config/db");
+
+pool.query("SELECT NOW()")
+  .then(() => console.log("PostgreSQL connected"))
+  .catch(err => console.error("PostgreSQL connection error:", err));
 
 // ======================
 // CORS CONFIGURATION
@@ -12,37 +20,37 @@ dotenv.config();
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:5174",
-  "https://deepseahotel.vercel.app"
+  "https://deepseahotel.vercel.app",
+  "https://hotel-management-zeta-livid.vercel.app"
 ];
 
-// Apply CORS middleware
-app.use(cors({
-  origin: allowedOrigins,
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    if (origin.includes('.vercel.app')) {
+      return callback(null, true);
+    }
+
+    return callback(new Error('Not allowed by CORS'));
+  },
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   credentials: true,
   allowedHeaders: ["Content-Type", "authorization"]
-}));
+};
 
-// Handle preflight OPTIONS requests
-app.options('*', cors({
-  origin: allowedOrigins,
-  credentials: true,
-  allowedHeaders: ["Content-Type", "authorization"]
-}));
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 // ======================
 // BODY PARSERS
 // ======================
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// ======================
-// REQUEST LOGGER (optional)
-// ======================
-app.use((req, res, next) => {
-  console.log(`${req.method} request for '${req.url}' - body:`, req.body);
-  next();
-});
 
 // ======================
 // ROUTES
@@ -62,21 +70,10 @@ app.use('/api/payments', paymentsRoute);
 app.use('/api/bookingFlow', bookingFlowRoute);
 
 // ======================
-// MONGODB CONNECTION
-// ======================
-mongoose.connect(process.env.Mongo_Url, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
-.then(() => console.log('MongoDB connected'))
-.catch(err => console.error("MongoDB connection error:", err));
-
-// ======================
 // START SERVER
 // ======================
 const PORT = process.env.PORT || 8000;
-const server = http.createServer(app);
 
-server.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Backend running on port ${PORT}`);
 });

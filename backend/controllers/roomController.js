@@ -1,97 +1,86 @@
-const Bookings = require("../models/Bookings");
-const Rooms = require("../models/Rooms");
+const pool = require("../config/db");
 
-// Create a new room
+// CREATE
 const createRoom = async (req, res) => {
-    const newRoom = new Rooms(req.body);
     try {
-        const savedRoom = await newRoom.save();
-        res.status(200).json(savedRoom);
-    } catch (err) {
-        res.status(500).json(err);
-    }
-};
+        const { type, capacity, rate, amenities } = req.body;
 
-// edit a room 
-const editRoom = async (req, res) => {
-    try {
-        const updatedRoom = await Rooms.findByIdAndUpdate(
-            req.params.id,
-            { $set: req.body },
-            { new: true }
+        const result = await pool.query(
+            `INSERT INTO rooms (type, capacity, rate, amenities)
+             VALUES ($1,$2,$3,$4)
+             RETURNING *`,
+            [type, capacity, rate, amenities]
         );
-        res.status(200).json(updatedRoom);
+
+        res.status(200).json(result.rows[0]);
     } catch (err) {
-        res.status(500).json(err);
+        res.status(500).json(err.message);
     }
 };
 
-// Get all rooms
+// GET ALL
 const getAllRooms = async (req, res) => {
-    try {
-        const rooms = await Rooms.find();
-        res.status(200).json(rooms);
-    } catch (err) {
-        res.status(500).json(err);
-    }
+    const result = await pool.query("SELECT * FROM rooms");
+    res.status(200).json(result.rows);
 };
 
-// Get a specific room by ID
+// GET BY ID
 const getRoomById = async (req, res) => {
-    try {
-        const room = await Rooms.findById(req.params.id);
-        res.status(200).json(room);
-    } catch (err) {
-        res.status(500).json(err);
-    }
+    const result = await pool.query(
+        "SELECT * FROM rooms WHERE id=$1",
+        [req.params.id]
+    );
+
+    res.status(200).json(result.rows[0]);
 };
 
-// Delete a room
+// DELETE
 const deleteRoom = async (req, res) => {
-    try {
-        await Rooms.findByIdAndDelete(req.params.id);
-        res.status(200).json("Room has been deleted...");
-    } catch (err) {
-        res.status(500).json(err);
-    }
+    await pool.query("DELETE FROM rooms WHERE id=$1", [req.params.id]);
+    res.status(200).json("Room deleted");
+};
+
+// UPDATE
+const editRoom = async (req, res) => {
+    const { type, capacity, rate } = req.body;
+
+    const result = await pool.query(
+        `UPDATE rooms
+         SET type=$1, capacity=$2, rate=$3
+         WHERE id=$4 RETURNING *`,
+        [type, capacity, rate, req.params.id]
+    );
+
+    res.status(200).json(result.rows[0]);
 };
 
 const isRoomAvailable = async (roomId, checkinDate, checkoutDate) => {
-    const overlappingBooking = await Bookings.findOne({
-        room: roomId,
-        status: "booked",
-        $or: [
-            {
-                checkinDate: { $lt: checkoutDate },
-                checkoutDate: { $gt: checkinDate }
-            }
-        ]
-    });
+    const result = await pool.query(
+        `SELECT 1
+         FROM bookings
+         WHERE room_id = $1
+         AND status = 'booked'
+         AND checkin_date < $2
+         AND checkout_date > $3
+         LIMIT 1`,
+        [roomId, checkoutDate, checkinDate]
+    );
 
-    return !overlappingBooking;
+    return result.rows.length === 0; // no overlap = available
 };
 
-// check room availability
 const checkAvailabilty = async (req, res) => {
     try {
         const { checkin, checkout } = req.query;
         const roomId = req.params.id;
 
-        const checkinDate = new Date(checkin);
-        const checkoutDate = new Date(checkout);
+        const available = await isRoomAvailable(roomId, checkin, checkout);
 
-        const available = await isRoomAvailable(roomId, checkinDate, checkoutDate);
-        res.status(200).json(available); 
+        res.status(200).json(available);
+
     } catch (err) {
-        res.status(500).json(err);
+        res.status(500).json(err.message);
     }
 };
 
-module.exports = {
-    createRoom,
-    getAllRooms,
-    getRoomById,
-    deleteRoom,
-    editRoom,
-    checkAvailabilty
-};
+module.exports = { createRoom, getAllRooms, getRoomById, deleteRoom, editRoom, isRoomAvailable, checkAvailabilty };

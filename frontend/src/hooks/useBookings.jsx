@@ -4,13 +4,15 @@ import axios from "axios";
 export const useBookings = (user) => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
-  const userId = user?._id;
+  const userId = user?.id;
+  const api = import.meta.env.VITE_API_URL || "http://localhost:8000"
+
   useEffect(() => {
     if (!userId) return;
     const fetchBookings = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8000/api/bookings/user/${userId}`,
+          `${api}/api/bookings/user/${userId}`,
           {
             headers: {
               Authorization: `Bearer ${user.token}`,
@@ -29,12 +31,12 @@ export const useBookings = (user) => {
 
   const cancelBooking = async (bookingId) => {
     try {
-      await axios.delete(`http://localhost:8000/api/bookings/${bookingId}`, {
+      await axios.delete(`${api}/api/bookings/${bookingId}`, {
         headers: {
           Authorization: `Bearer ${user.token}`,
         },
       });
-      setBookings((prev) => prev.filter((b) => (b._id || b.id) !== bookingId));
+      setBookings((prev) => prev.filter((b) => (b.id || b.id) !== bookingId));
     } catch (error) {
       console.error("Error cancelling booking:", error);
     }

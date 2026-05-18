@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { useAuthContext } from '../hooks/useAuthContext';
 
 // --- Helper Components & Icons ---
-
+const api = import.meta.env.VITE_API_URL || "http://localhost:8000"
 const Spinner = () => (
     <div className="flex h-32 items-center justify-center">
         <div className="h-12 w-12 animate-spin rounded-full border-4 border-t-4 border-gray-200 border-t-blue-600"></div>
@@ -37,7 +37,7 @@ const Allpayments = () => {
         const fetchPayments = async () => {
             try {
                 // API call to your backend endpoint
-                const response = await axios.get('http://localhost:8000/api/payments', {
+                const response = await axios.get(`${api}/api/payments`, {
                     headers: {
                         Authorization: `Bearer ${user.token}`
                     },
@@ -91,8 +91,8 @@ const Allpayments = () => {
                                 </thead>
                                 <tbody className="divide-y divide-gray-200 bg-white">
                                     {payments.map((payment) => (
-                                        <tr key={payment._id} className="transition-colors hover:bg-gray-50">
-                                            <td className="whitespace-nowrap px-6 py-4 text-sm font-mono text-gray-500">{payment._id}</td>
+                                        <tr key={payment.id} className="transition-colors hover:bg-gray-50">
+                                            <td className="whitespace-nowrap px-6 py-4 text-sm font-mono text-gray-500">{payment.id}</td>
                                             <td className="whitespace-nowrap px-6 py-4 text-sm font-mono text-gray-500">{payment.user}</td>
                                             <td className="whitespace-nowrap px-6 py-4 text-sm font-mono text-gray-500">{payment.booking}</td>
                                             <td className="whitespace-nowrap px-6 py-4 text-sm font-semibold text-gray-900">&#8377;{payment.amount.toFixed(2)}</td>

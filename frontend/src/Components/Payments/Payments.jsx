@@ -68,80 +68,143 @@ function Payments() {
 
     // --- Handle Payment Submission ---
     const handlePayment = (e) => {
+
         e.preventDefault();
+
         setIsLoading(true);
         setMessage(null);
 
         setTimeout(async () => {
-            // setIsLoading(false);
 
             try {
-                console.log("Sending bookingId:", bookingid, "method:", selectedMethod);
+
+                console.log(
+                    "Sending bookingId:",
+                    bookingid,
+                    "method:",
+                    selectedMethod
+                );
+
                 const response = await axios.post(
                     `${api}/api/bookingFlow/bookRoom`,
                     {
                         bookingId: bookingid,
                         paymentMethod: selectedMethod,
                     },
-                    { withCredentials: true }
+                    {
+                        withCredentials: true,
+                    }
                 );
 
-                    // Automatically navigate after 3 seconds
-                    setTimeout(() => {
-                        navigate(`/profile/${user.id}`, {
-                            state: { paymentComplete: true },
-                            replace: true // Replace current entry in history
-                        });
-                    }, 3000);
-                }
-                else {
+                console.log(
+                    "Booking & payment response:",
+                    response.data
+                );
+
+                // CASH PAYMENT
+                if (selectedMethod === "cash") {
+
                     setMessage({
-                        title: "Payment Failed!",
-                        text: response.data.error || "There was an issue processing your payment.",
-                        isSuccess: false,
+                        isSuccess: true,
+                        title: "Booking Confirmed!",
+                        text:
+                            "Your booking has been confirmed. Please pay at the front desk upon check-in.",
                     });
 
-                    // Automatically navigate after 3 seconds
                     setTimeout(() => {
+
                         navigate(`/profile/${user.id}`, {
-                            state: { paymentComplete: true },
-                            replace: true // Replace current entry in history
+                            state: {
+                                paymentComplete: true
+                            },
+                            replace: true
                         });
+
                     }, 3000);
+
                 }
+
+                // UPI / NET BANKING
+                else if (
+                    selectedMethod === "upi" ||
+                    selectedMethod === "net_banking"
+                ) {
+
+                    setMessage({
+                        title: "Payment Successful!",
+                        text:
+                            "Your booking has been confirmed. You will receive an email with your booking details shortly.",
+                        isSuccess: true,
+                    });
+
+                    setTimeout(() => {
+
+                        navigate(`/profile/${user.id}`, {
+                            state: {
+                                paymentComplete: true
+                            },
+                            replace: true
+                        });
+
+                    }, 3000);
+
+                }
+
+                // CARD PAYMENTS
                 else {
+
                     if (response.status === 200) {
+
                         setMessage({
                             title: "Payment Successful!",
-                            text: response.data.message || "Your booking has been confirmed.",
+                            text:
+                                response.data.message ||
+                                "Your booking has been confirmed.",
                             isSuccess: true,
                         });
 
-                        // Automatically navigate after 3 seconds
                         setTimeout(() => {
+
                             navigate(`/profile/${user.id}`, {
-                                state: { paymentComplete: true },
-                                replace: true // Replace current entry in history
+                                state: {
+                                    paymentComplete: true
+                                },
+                                replace: true
                             });
+
                         }, 3000);
+
                     } else {
+
                         setMessage({
                             title: "Payment Failed!",
-                            text: response.data.error || "There was an issue processing your payment.",
+                            text:
+                                response.data.error ||
+                                "There was an issue processing your payment.",
                             isSuccess: false,
                         });
                     }
                 }
 
-                console.log('Booking & payment response:', response.data);
             } catch (err) {
+
                 setMessage({
                     isSuccess: false,
                     title: "Payment Failed!",
-                    text: "There was an issue processing your payment. Please try again or use a different method.",
+                    text:
+                        "There was an issue processing your payment. Please try again or use a different method.",
                 });
-                console.error("Payment error:", err);
+
+                console.error(
+                    "Payment error:",
+                    err
+                );
+
+            } finally {
+
+                setIsLoading(false);
             }
+
         }, 2000);
     };
 

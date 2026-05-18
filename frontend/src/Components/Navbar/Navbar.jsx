@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../hooks/useAuthContext";
 import { useLogout } from "../../hooks/useLogout";
-import { Menu, X } from "lucide-react"; // icons
+import { Menu, X } from "lucide-react";
+import { openPopup } from "../GlobalPopup/globalPopup";
 
 function Navbar() {
     const navigate = useNavigate();
@@ -34,13 +35,13 @@ function Navbar() {
             {user ? (
                 <>
                     <a
-                        onClick={() => navigate(`/profile/${user._id}`)}
+                        onClick={() => navigate(`/profile/${user.id}`)}
                         className="text-white/90 text-[14px] lg:text-[16px] cursor-pointer hover:text-white"
                     >
                         Profile
                     </a>
                     <span
-                        onClick={()=> setLogoutPopup(true)}
+                        onClick={() => setLogoutPopup(true)}
                         className="text-white/90 text-[14px] lg:text-[16px] cursor-pointer hover:text-white"
                     >
                         Logout
@@ -84,34 +85,19 @@ function Navbar() {
 
             {/* Logout Confirmation Popup */}
             {logoutPopup && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-50">
-                    <div className="bg-white rounded-xl p-10 w-[400px] shadow-lg">
-                        <h3 className="text-2xl font-bold mb-4 text-gray-800">
-                            Confirm Logout
-                        </h3>
-                        <p className="mb-4 text-gray-600">
-                            Are you sure you want to logout?
-                        </p>
-                        <div className="flex justify-end gap-3">
-                            <button
-                                onClick={() => setLogoutPopup(false)}
-                                className="px-4 py-2 rounded-lg bg-gray-300 text-gray-800 hover:bg-gray-400"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                onClick={() => {
-                                    logout();
-                                    setLogoutPopup(false);
-                                }}
-                                className="px-4 py-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600"
-                            >
-                                Logout
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                openPopup({
+                    title: 'Confirm Logout',
+                    content: 'Are you sure you want to logout?',
+                    type: 'info', // Or 'danger' if you want a red emphasis button
+                    confirmText: 'Logout',
+                    cancelText: 'Cancel',
+                    onConfirm: () => {
+                        logout(); // Executes your actual logout function
+                    },
+                })
+
             )}
+
         </nav>
     );
 }

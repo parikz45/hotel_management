@@ -4,7 +4,7 @@ import axios from "axios";
 export const useBookings = (user) => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
-  const userId = user?._id;
+  const userId = user?.id;
   const api = import.meta.env.VITE_API_URL || "http://localhost:8000"
 
   useEffect(() => {
@@ -36,7 +36,7 @@ export const useBookings = (user) => {
           Authorization: `Bearer ${user.token}`,
         },
       });
-      setBookings((prev) => prev.filter((b) => (b._id || b.id) !== bookingId));
+      setBookings((prev) => prev.filter((b) => (b.id || b.id) !== bookingId));
     } catch (error) {
       console.error("Error cancelling booking:", error);
     }

@@ -12,13 +12,12 @@ function Payments() {
     const [selectedMethod, setSelectedMethod] = useState('credit_card');
     const [message, setMessage] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
-    const [paymentResponse, setPaymentResponse] = useState(null);
     const [amount, setAmount] = useState("");
-    const [paymentStatus, setPaymentStatus] = useState("");
-    const [paymentMethod, setPaymentMethod] = useState("");
     const [checkinDate, setCheckinDate] = useState("");
     const [checkoutDate, setCheckoutDate] = useState("");
     const [nights, setNights] = useState(0);
+    const [roomType, setRoomType] = useState("");
+
     const api = import.meta.env.VITE_API_URL || "http://localhost:8000"
     const paymentMethods = {
         'credit_card': { text: 'Card Details', isForm: true, icon: 'https://img.icons8.com/color/48/000000/visa.png' },
@@ -67,7 +66,7 @@ function Payments() {
 
                     // Automatically navigate after 3 seconds
                     setTimeout(() => {
-                        navigate(`/profile/${user._id}`, {
+                        navigate(`/profile/${user.id}`, {
                             state: { paymentComplete: true },
                             replace: true // Replace current entry in history
                         });
@@ -82,7 +81,7 @@ function Payments() {
 
                     // Automatically navigate after 3 seconds
                     setTimeout(() => {
-                        navigate(`/profile/${user._id}`, {
+                        navigate(`/profile/${user.id}`, {
                             state: { paymentComplete: true },
                             replace: true // Replace current entry in history
                         });
@@ -98,7 +97,7 @@ function Payments() {
 
                         // Automatically navigate after 3 seconds
                         setTimeout(() => {
-                            navigate(`/profile/${user._id}`, {
+                            navigate(`/profile/${user.id}`, {
                                 state: { paymentComplete: true },
                                 replace: true // Replace current entry in history
                             });
@@ -111,7 +110,6 @@ function Payments() {
                         });
                     }
                 }
-
 
                 console.log('Booking & payment response:', response.data);
             } catch (err) {
@@ -154,8 +152,9 @@ function Payments() {
                 if (response.data && response.data.amount) {
                     setAmount(response.data.amount);
 
-                    const checkin = new Date(response.data.checkinDate);
-                    const checkout = new Date(response.data.checkoutDate);
+                    const checkin = new Date(response.data.checkin_date);
+                    const checkout = new Date(response.data.checkout_date);
+                    setRoomType(response.data.type);
 
                     setCheckinDate(formatDate(checkin));
                     setCheckoutDate(formatDate(checkout));
@@ -201,7 +200,7 @@ function Payments() {
                         <h2 className="text-2xl lg:text-3xl font-semibold mb-2">Booking Summary</h2>
                         <div className="flex justify-between items-center font-semibold lg:mt-[20px] text-gray-600">
                             <span>Room Type</span>
-                            <span className="text-gray-900 font-medium">Deluxe Suite</span>
+                            <span className="text-gray-900 font-medium">{roomType}</span>
                         </div>
                         <div className="flex justify-between items-center text-gray-600 mt-2">
                             <span>Check-in Date</span>
@@ -300,7 +299,7 @@ function Payments() {
                                 setMessage(null);
                                 if (message.isSuccess) {
                                     // Navigate to profile with state indicating payment is complete
-                                    navigate(`/profile/${user._id}`, {
+                                    navigate(`/profile/${user.id}`, {
                                         state: { paymentComplete: true },
                                         replace: true // This replaces the current page in history
                                     });

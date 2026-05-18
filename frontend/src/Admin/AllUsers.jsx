@@ -77,10 +77,10 @@ function AdminUsers() {
                         ) : users.length > 0 ? (
                             users.map((u) => (
                                 <tr
-                                    key={u._id}
+                                    key={u.id}
                                     className="border-b hover:bg-gray-50 transition"
                                 >
-                                    <td className="px-6 py-4 text-sm text-gray-700">{u._id}</td>
+                                    <td className="px-6 py-4 text-sm text-gray-700">{u.id}</td>
                                     <td className="px-6 py-4 text-sm ">
                                         {u.username}
                                     </td>

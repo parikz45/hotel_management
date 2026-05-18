@@ -66,7 +66,7 @@ const BookingCard = ({ booking }) => {
                     </div>
                     <div>
                         <p className="font-semibold text-gray-500">Room ID</p>
-                        <p className="text-gray-800">{booking.room?._id}</p>
+                        <p className="text-gray-800">{booking.room?.id}</p>
                     </div>
                 </div>
                 <div className="mt-6 flex items-center justify-start gap-4">
@@ -124,7 +124,7 @@ const Userbookings = () => {
                         <div className="p-8 text-center text-red-600 rounded-lg bg-white shadow-md">{error}</div>
                     ) : bookings.length > 0 ? (
                         bookings.map((booking) => (
-                            <BookingCard key={booking._id} booking={booking} />
+                            <BookingCard key={booking.id} booking={booking} />
                         ))
                     ) : (
                         <div className="p-8 text-center text-gray-500 rounded-lg bg-white shadow-md">

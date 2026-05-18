@@ -16,6 +16,7 @@ import AdminUsers from './Admin/AllUsers';
 import Userbookings from './Admin/Userbookings';
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { GlobalPopup } from './Components/GlobalPopup/globalPopup';
 
 function App() {
   const { user } = useAuthContext();
@@ -71,7 +72,7 @@ function App() {
           theme="light"
         />
       </Router>
-
+      <GlobalPopup />
     </>
   );
 }

@@ -72,4 +72,58 @@ const signupPost = async (req, res) => {
     }
 };
 
-module.exports = { loginPost, signupPost };
+const getUserIdByUsername = async (req, res) => {
+    try {
+        const result = await pool.query(
+            "SELECT id FROM users WHERE username = $1",
+            [req.params.username]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        res.status(200).json({ userId: result.rows[0].id });
+
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+const assignAdminRole = async (req, res) => {
+    try {
+        const { userId } = req.body;
+
+        const result = await pool.query(
+            "UPDATE users SET role = 'admin' WHERE id = $1 RETURNING *",
+            [userId]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        res.status(200).json({
+            message: "User role updated to admin",
+            user: result.rows[0]
+        });
+
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+const getAllUsers = async (req, res) => {
+    try {
+        const result = await pool.query(
+            "SELECT id, username, email, role FROM users"
+        );
+
+        res.status(200).json(result.rows);
+
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+module.exports = { loginPost, signupPost, getUserIdByUsername, assignAdminRole, getAllUsers };

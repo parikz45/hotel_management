@@ -54,4 +54,33 @@ const editRoom = async (req, res) => {
     res.status(200).json(result.rows[0]);
 };
 
-module.exports = { createRoom, getAllRooms, getRoomById, deleteRoom, editRoom };
+const isRoomAvailable = async (roomId, checkinDate, checkoutDate) => {
+    const result = await pool.query(
+        `SELECT 1
+         FROM bookings
+         WHERE room_id = $1
+         AND status = 'booked'
+         AND checkin_date < $2
+         AND checkout_date > $3
+         LIMIT 1`,
+        [roomId, checkoutDate, checkinDate]
+    );
+
+    return result.rows.length === 0; // no overlap = available
+};
+
+const checkAvailabilty = async (req, res) => {
+    try {
+        const { checkin, checkout } = req.query;
+        const roomId = req.params.id;
+
+        const available = await isRoomAvailable(roomId, checkin, checkout);
+
+        res.status(200).json(available);
+
+    } catch (err) {
+        res.status(500).json(err.message);
+    }
+};
+
+module.exports = { createRoom, getAllRooms, getRoomById, deleteRoom, editRoom, isRoomAvailable, checkAvailabilty };

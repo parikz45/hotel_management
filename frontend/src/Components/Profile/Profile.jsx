@@ -18,7 +18,7 @@ const Profile = () => {
     openReviewModal,
     closeReviewModal,
     submitReview,
-  } = useReview(user._id);
+  } = useReview(user.id);
 
   const getStatusClass = (status) => {
     switch (status) {
@@ -44,25 +44,28 @@ const Profile = () => {
       <main className="max-w-4xl mx-auto">
         <div className="my-10 text-center">
           <h2 className="text-3xl font-bold mb-2">My Profile</h2>
-          <p className="text-gray-400 text-sm">User ID: {user._id}</p>
+          <p className="text-gray-400 text-sm">User ID: {user.id}</p>
         </div>
 
         <div className="space-y-6">
           {bookings.length > 0 ? (
             bookings.map((booking) => {
-              const bookingId = booking._id || booking.id;
+              const bookingId = booking.id || booking.id;
               return (
                 <div
                   key={bookingId}
                   className="bg-white text-gray-800 rounded-2xl p-8 mb-8 shadow-lg flex flex-col sm:flex-row"
                 >
                   <img
-                    src={`${booking.room.images[0]}`}
-                    alt={booking.room.type}
+                    src={
+                      booking.images?.[0] ||
+                      "/room1.jpg"
+                    }
+                    alt={booking.type || "Room"}
                     className="rounded-xl w-full sm:w-56 h-40 object-cover mb-6 sm:mb-0 sm:mr-8"
                   />
                   <div className="flex-grow">
-                    <h3 className="text-2xl font-bold mb-4">{booking.room.type}</h3>
+                    <h3 className="text-2xl font-bold mb-4">{booking.type}</h3>
                     <div className="grid grid-cols-2 gap-6 sm:flex sm:space-x-10 text-gray-700">
                       <div>
                         <span className="text-sm font-medium">Check-in:</span>

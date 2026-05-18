@@ -91,8 +91,8 @@ const Allpayments = () => {
                                 </thead>
                                 <tbody className="divide-y divide-gray-200 bg-white">
                                     {payments.map((payment) => (
-                                        <tr key={payment._id} className="transition-colors hover:bg-gray-50">
-                                            <td className="whitespace-nowrap px-6 py-4 text-sm font-mono text-gray-500">{payment._id}</td>
+                                        <tr key={payment.id} className="transition-colors hover:bg-gray-50">
+                                            <td className="whitespace-nowrap px-6 py-4 text-sm font-mono text-gray-500">{payment.id}</td>
                                             <td className="whitespace-nowrap px-6 py-4 text-sm font-mono text-gray-500">{payment.user}</td>
                                             <td className="whitespace-nowrap px-6 py-4 text-sm font-mono text-gray-500">{payment.booking}</td>
                                             <td className="whitespace-nowrap px-6 py-4 text-sm font-semibold text-gray-900">&#8377;{payment.amount.toFixed(2)}</td>

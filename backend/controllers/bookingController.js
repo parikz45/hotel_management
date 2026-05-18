@@ -28,6 +28,29 @@ exports.getBookingsByUser = async (req, res) => {
     res.status(200).json(result.rows);
 };
 
+// Get a booking by ID
+exports.getBookingById = async (req, res) => {
+    try {
+        const result = await pool.query(
+            `SELECT b.*, r.*, u.username
+             FROM bookings b
+             JOIN rooms r ON b.room_id = r.id
+             JOIN users u ON b.user_id = u.id
+             WHERE b.id = $1`,
+            [req.params.id]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: "Booking not found" });
+        }
+
+        res.status(200).json(result.rows[0]);
+
+    } catch (err) {
+        res.status(500).json(err.message);
+    }
+};
+
 // GET ALL (ADMIN)
 exports.getAllBookings = async (req, res) => {
     const result = await pool.query(
@@ -38,4 +61,23 @@ exports.getAllBookings = async (req, res) => {
     );
 
     res.status(200).json(result.rows);
+};
+
+// Delete a booking
+exports.deleteBooking = async (req, res) => {
+    try {
+        const result = await pool.query(
+            "DELETE FROM bookings WHERE id = $1 RETURNING *",
+            [req.params.id]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: "Booking not found" });
+        }
+
+        res.status(200).json("Booking has been deleted...");
+
+    } catch (err) {
+        res.status(500).json(err.message);
+    }
 };

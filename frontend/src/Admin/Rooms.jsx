@@ -75,7 +75,7 @@ const RoomCard = ({ room, onEdit, onDelete }) => {
         <div className="mt-auto pt-4">
           <div className="flex justify-end space-x-2">
             <button onClick={() => onEdit(room)} className="rounded-md bg-blue-500 px-3 py-1 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-600">Edit</button>
-            <button onClick={() => onDelete(room._id)} className="rounded-md bg-red-500 px-3 py-1 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-red-600">Delete</button>
+            <button onClick={() => onDelete(room.id)} className="rounded-md bg-red-500 px-3 py-1 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-red-600">Delete</button>
           </div>
         </div>
       </div>
@@ -419,7 +419,7 @@ const Rooms = () => {
     console.log('Saving room with data:', roomPayload);
     try {
       if (currentRoom) {
-        const response = await axios.patch(`${api}/api/rooms/${currentRoom._id}`, roomPayload, {
+        const response = await axios.patch(`${api}/api/rooms/${currentRoom.id}`, roomPayload, {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -480,7 +480,7 @@ const Rooms = () => {
         <main>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {rooms && rooms.map(room => (
-              <RoomCard key={room._id} room={room} onEdit={handleEdit} onDelete={handleDelete} />
+              <RoomCard key={room.id} room={room} onEdit={handleEdit} onDelete={handleDelete} />
             ))}
           </div>
         </main>

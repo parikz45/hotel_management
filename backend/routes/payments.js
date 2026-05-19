@@ -1,10 +1,25 @@
 const router = require("express").Router();
 
-const { createPayment, getPaymentsByUser, getAllPayments } = require("../controllers/paymentsController");
-const checkAdminRole = require("../middleware/checkAdminRole");
+const {
+    getAllPayments,
+    getPaymentByBookingId
+} = require("../controllers/paymentsController");
+
 const requireAuth = require("../middleware/requireAuth");
+const checkAdminRole = require("../middleware/checkAdminRole");
 
 // Get all payments (admin only)
-router.get("/", requireAuth, checkAdminRole, getAllPayments);
+router.get(
+    "/",
+    requireAuth,
+    checkAdminRole,
+    getAllPayments
+);
+
+// Get payment by booking id
+router.get(
+    "/:bookingid",
+    getPaymentByBookingId
+);
 
 module.exports = router;

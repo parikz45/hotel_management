@@ -70,13 +70,13 @@ const Profile = () => {
                       <div>
                         <span className="text-sm font-medium">Check-in:</span>
                         <span className="font-bold block text-lg">
-                          {new Date(booking.checkinDate).toLocaleDateString()}
+                          {new Date(booking.checkin_date).toLocaleDateString()}
                         </span>
                       </div>
                       <div>
                         <span className="text-sm font-medium">Check-out:</span>
                         <span className="font-bold block text-lg">
-                          {new Date(booking.checkoutDate).toLocaleDateString()}
+                          {new Date(booking.checkout_date).toLocaleDateString()}
                         </span>
                       </div>
                       <div>
@@ -110,13 +110,13 @@ const Profile = () => {
                                     cancelBooking(bookingId);
                                     setConfirmCancelId(null);
                                   }}
-                                  className="px-4 py-2 text-sm rounded-lg bg-red-500 text-white hover:bg-red-600"
+                                  className="px-4 py-2 cursor-pointer text-sm rounded-lg bg-red-500 text-white hover:bg-red-600"
                                 >
                                   Yes, Cancel
                                 </button>
                                 <button
                                   onClick={() => setConfirmCancelId(null)}
-                                  className="px-4 py-2 text-sm rounded-lg bg-gray-300 text-gray-800 hover:bg-gray-400"
+                                  className="px-4 py-2 cursor-pointer text-sm rounded-lg bg-gray-300 text-gray-800 hover:bg-gray-400"
                                 >
                                   No
                                 </button>
@@ -124,7 +124,7 @@ const Profile = () => {
                             ) : (
                               <button
                                 onClick={() => setConfirmCancelId(bookingId)}
-                                className="ml-4 px-4 py-2 text-sm rounded-lg bg-red-500 text-white hover:bg-red-600"
+                                className="ml-4 px-4 py-2 cursor-pointer text-sm rounded-lg bg-red-500 text-white hover:bg-red-600"
                               >
                                 Cancel Booking
                               </button>
@@ -136,7 +136,7 @@ const Profile = () => {
                       {booking.status === "booked" && (
                         <button
                           onClick={() => openReviewModal(bookingId)}
-                          className="ml-4 px-4 py-2 text-sm rounded-lg bg-blue-500 text-white hover:bg-blue-600"
+                          className="ml-4 px-4 py-2 cursor-pointer text-sm rounded-lg bg-blue-500 text-white hover:bg-blue-600"
                         >
                           Write Review
                         </button>

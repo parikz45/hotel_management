@@ -1,6 +1,6 @@
-const router=require('express').Router();
-const {bookRoomFlow}=require('../controllers/bookRoomFlow');
+const router= require("express").Router();
+const { bookRoomFlow } = require("../controllers/bookRoomFlow");
 
-router.post('/bookRoom',bookRoomFlow);
+router.post("/bookRoom", bookRoomFlow);
 
-module.exports=router;
+module.exports = router;
